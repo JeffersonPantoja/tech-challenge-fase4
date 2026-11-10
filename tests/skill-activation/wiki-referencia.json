@@ -1,0 +1,18 @@
+[
+  {"id": "wiki-pos-01", "query": "O que a wiki ensina sobre reconhecimento de poses em vídeos?", "should_trigger": true},
+  {"id": "wiki-pos-02", "query": "Encontre na wiki as aulas que explicam Textract e extração de texto.", "should_trigger": true},
+  {"id": "wiki-pos-03", "query": "Que exemplos de transcrição de áudio existem nos materiais?", "should_trigger": true},
+  {"id": "wiki-pos-04", "query": "Compare o conteúdo da wiki sobre análise de sentimento e classificação de texto.", "should_trigger": true},
+  {"id": "wiki-pos-05", "query": "Procure nos PDFs de OpenAI a parte sobre integração e automação.", "should_trigger": true},
+  {"id": "wiki-pos-06", "query": "Qual script da wiki demonstra detecção de pose?", "should_trigger": true},
+  {"id": "wiki-pos-07", "query": "Quais são as referências da wiki para reconhecimento facial?", "should_trigger": true},
+  {"id": "wiki-pos-08", "query": "Pesquise nos documentos de referência o que é AWS Comprehend.", "should_trigger": true},
+  {"id": "wiki-neg-01", "query": "Pesquise no documento de requisitos do projeto qual é o objetivo do protótipo cirúrgico.", "should_trigger": false},
+  {"id": "wiki-neg-02", "query": "Adicione um teste Python ao harness de requisitos.", "should_trigger": false},
+  {"id": "wiki-neg-03", "query": "Explique em termos gerais o que é visão computacional, sem consultar os materiais do projeto.", "should_trigger": false},
+  {"id": "wiki-neg-04", "query": "Crie um script Python que renomeie arquivos em uma pasta temporária.", "should_trigger": false},
+  {"id": "wiki-neg-05", "query": "Investigue online as condições de acesso atuais do PhysioNet.", "should_trigger": false},
+  {"id": "wiki-neg-06", "query": "Corrija um erro de formatação no README do projeto.", "should_trigger": false},
+  {"id": "wiki-neg-07", "query": "Descreva a estrutura de diretórios do projeto sem pesquisar a wiki.", "should_trigger": false},
+  {"id": "wiki-neg-08", "query": "Procure no arquivo prototipo-revisao-cirurgica.md as limitações do protótipo.", "should_trigger": false}
+]

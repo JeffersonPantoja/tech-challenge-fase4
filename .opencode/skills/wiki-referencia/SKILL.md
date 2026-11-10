@@ -12,10 +12,10 @@ Use esta skill sempre que a pergunta do usuário depender de conteúdo que possa
 1. Pesquise antes de responder. Na raiz do projeto, execute:
 
    ```bash
-   python3 wiki.py buscar "<termos relevantes>" -n 5
+   python3 .opencode/skills/wiki-referencia/scripts/wiki.py buscar "<termos relevantes>" -n 5
    ```
 
-   Se os documentos foram alterados desde a última indexação, atualize primeiro com `python3 wiki.py indexar`.
+   Se os documentos foram alterados desde a última indexação, atualize primeiro com `python3 .opencode/skills/wiki-referencia/scripts/wiki.py indexar`.
 
 2. Escolha termos específicos da pergunta. Se a busca não retornar evidências suficientes, tente uma formulação alternativa ou termos mais curtos. Para perguntas com temas distintos, faça buscas separadas.
 3. Leia os trechos retornados e, quando necessário, abra o arquivo de origem para confirmar contexto. Para PDFs, use `pdftotext` ou a ferramenta de leitura de arquivos disponível. Não trate a pontuação lexical como medida de confiança factual.

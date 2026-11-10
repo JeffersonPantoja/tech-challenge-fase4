@@ -13,9 +13,10 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree
 
-ROOT = Path(__file__).parent / "documentos" / "wiki-referencia"
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
+ROOT = PROJECT_ROOT / "documentos" / "wiki-referencia"
 SUPPORTED = {".txt", ".py", ".md", ".ipynb", ".pdf", ".docx"}
-INDEX = Path(__file__).parent / ".wiki-index.json"
+INDEX = PROJECT_ROOT / ".wiki-index.json"
 STOP_WORDS = {
     "a", "à", "ao", "aos", "as", "com", "como", "da", "das", "de", "do", "dos",
     "e", "em", "entre", "é", "o", "os", "ou", "para", "por", "que", "se", "um", "uma",

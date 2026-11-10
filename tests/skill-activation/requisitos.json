@@ -1,0 +1,18 @@
+[
+  {"id": "req-pos-01", "query": "O que está definido como objetivo do protótipo de revisão cirúrgica?", "should_trigger": true},
+  {"id": "req-pos-02", "query": "Quais são as limitações documentadas para usar Cholec80?", "should_trigger": true},
+  {"id": "req-pos-03", "query": "Como o documento de requisitos propõe gerar os alertas para revisão humana?", "should_trigger": true},
+  {"id": "req-pos-04", "query": "Quais métricas de avaliação foram previstas para o protótipo?", "should_trigger": true},
+  {"id": "req-pos-05", "query": "Procure nos requisitos as regras para separar treino, validação e teste.", "should_trigger": true},
+  {"id": "req-pos-06", "query": "O projeto diz que o sistema pode orientar cirurgias reais?", "should_trigger": true},
+  {"id": "req-pos-07", "query": "Quais saídas o relatório acadêmico deve apresentar segundo o requisito documentado?", "should_trigger": true},
+  {"id": "req-pos-08", "query": "Encontre no documento do protótipo o fluxo de análise dos vídeos.", "should_trigger": true},
+  {"id": "req-neg-01", "query": "Pesquise na wiki os conceitos de OpenPose e YOLOv8.", "should_trigger": false},
+  {"id": "req-neg-02", "query": "Que PDFs da wiki explicam análise de sentimento?", "should_trigger": false},
+  {"id": "req-neg-03", "query": "Explique genericamente o que é um requisito de software.", "should_trigger": false},
+  {"id": "req-neg-04", "query": "Crie uma pasta de requisitos e escreva um documento novo sobre outra funcionalidade.", "should_trigger": false},
+  {"id": "req-neg-05", "query": "Pesquise na internet benchmarks atuais de modelos de detecção de objetos.", "should_trigger": false},
+  {"id": "req-neg-06", "query": "Execute os testes do harness de requisitos e corrija uma falha no código.", "should_trigger": false},
+  {"id": "req-neg-07", "query": "Resuma o PDF do Tech Challenge guardado na wiki.", "should_trigger": false},
+  {"id": "req-neg-08", "query": "Qual é a sintaxe de frontmatter exigida pelo OpenCode para uma skill?", "should_trigger": false}
+]

@@ -1,0 +1,7 @@
+# Índices locais gerados pelos harnesses
+.wiki-index.json
+.requisitos-index.json
+
+# Artefatos Python
+__pycache__/
+*.py[cod]
