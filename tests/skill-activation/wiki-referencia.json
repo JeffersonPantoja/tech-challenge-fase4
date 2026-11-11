@@ -14,5 +14,5 @@
   {"id": "wiki-neg-05", "query": "Investigue online as condições de acesso atuais do PhysioNet.", "should_trigger": false},
   {"id": "wiki-neg-06", "query": "Corrija um erro de formatação no README do projeto.", "should_trigger": false},
   {"id": "wiki-neg-07", "query": "Descreva a estrutura de diretórios do projeto sem pesquisar a wiki.", "should_trigger": false},
-  {"id": "wiki-neg-08", "query": "Procure no arquivo prototipo-revisao-cirurgica.md as limitações do protótipo.", "should_trigger": false}
+  {"id": "wiki-neg-08", "query": "Procure no arquivo prototipo-revisao-cirurgica.md as limitações do protótipo.", "should_trigger": true}
 ]
