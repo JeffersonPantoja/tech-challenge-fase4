@@ -5,7 +5,8 @@ from pathlib import Path
 @dataclass(frozen=True)
 class TrackingRequest:
     video_path: Path
-    output_path: Path
+    output_root: Path
+    tool_class: str
     tracker_name: str = "CSRT"
     display: bool = True
 
@@ -13,8 +14,9 @@ class TrackingRequest:
 @dataclass(frozen=True)
 class TrackingResult:
     video_path: Path
+    tool_class: str
+    sequence_number: int
     output_path: Path
-    annotations_path: Path
     tracker_name: str
     frames_processed: int
     tracking_failures: int
