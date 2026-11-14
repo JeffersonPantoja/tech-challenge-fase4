@@ -5,6 +5,9 @@
 # Dataset local (arquivos grandes e sujeitos a termos próprios de uso)
 resources/cholec80/
 resources/cholec80.zip
+resources/datasets/
+resources/results/
+**/runs/
 
 # Artefatos Python
 .venv/

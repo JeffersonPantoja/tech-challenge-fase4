@@ -1,2 +1,3 @@
 # OpenCV with KCF/CSRT trackers and GUI support for selecting the initial ROI.
 opencv-contrib-python>=4.10,<5
+ultralytics>=8.3,<9
