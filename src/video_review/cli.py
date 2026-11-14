@@ -35,13 +35,13 @@ def _add_data_parser(subparsers) -> None:
     validate.add_argument("--tracking-root", type=Path, default=DEFAULT_TRACKING_ROOT)
     validate.set_defaults(handler=_validate_data)
 
-    prepare = commands.add_parser("prepare", help="Recriar o dataset YOLO, dividido por blocos temporais")
+    prepare = commands.add_parser("prepare", help="Recriar dataset YOLO com sorteio estratificado por ferramenta")
     prepare.add_argument("--tracking-root", type=Path, default=DEFAULT_TRACKING_ROOT)
     prepare.add_argument("--output", type=Path, default=DEFAULT_DATASET_ROOT)
     prepare.add_argument("--seed", type=int, default=42)
-    prepare.add_argument("--block-seconds", type=float, default=30.0, help="Duração dos blocos contínuos")
-    prepare.add_argument("--gap-seconds", type=float, default=2.0, help="Lacuna total entre partições temporais diferentes")
-    prepare.add_argument("--fps", type=float, default=25.0, help="FPS do vídeo de origem para converter frames em tempo")
+    prepare.add_argument("--train-ratio", type=float, default=0.80)
+    prepare.add_argument("--val-ratio", type=float, default=0.10)
+    prepare.add_argument("--test-ratio", type=float, default=0.10)
     prepare.set_defaults(handler=_prepare_data)
 
 
@@ -119,9 +119,9 @@ def _prepare_data(args) -> int:
         _path(args.tracking_root),
         _path(args.output),
         seed=args.seed,
-        block_seconds=args.block_seconds,
-        gap_seconds=args.gap_seconds,
-        fps=args.fps,
+        train_ratio=args.train_ratio,
+        val_ratio=args.val_ratio,
+        test_ratio=args.test_ratio,
     )
     print(f"Dataset YOLO recriado em: {_path(args.output)}")
     print(f"Configuração: {_path(args.output) / 'data.yaml'}")

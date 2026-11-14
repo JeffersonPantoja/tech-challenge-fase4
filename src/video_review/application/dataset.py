@@ -16,6 +16,8 @@ from video_review.application.track_video import TOOL_CLASSES
 @dataclass(frozen=True)
 class Annotation:
     image_path: Path
+    tracking_run: str
+    tool_class: str
     source_video: str
     frame_index: int
     labels: tuple[str, ...]
@@ -34,7 +36,7 @@ def _read_tracking_annotations(tracking_root: Path) -> tuple[list[Annotation], i
     if not tracking_root.is_dir():
         raise FileNotFoundError(f"Pasta de rastreamentos não encontrada: {tracking_root}")
 
-    rows: dict[tuple[str, int], dict[str, object]] = {}
+    rows: list[Annotation] = []
     empty_runs = 0
     class_ids = {name: index for index, name in enumerate(TOOL_CLASSES)}
 
@@ -72,12 +74,7 @@ def _read_tracking_annotations(tracking_root: Path) -> tuple[list[Annotation], i
                 if not label_path.is_file():
                     raise ValueError(f"Label correspondente não encontrado: {label_path}")
 
-                row_key = (video_id, frame_index)
-                if row_key not in rows:
-                    rows[row_key] = {"image_path": image_path, "labels": set()}
-                elif image_path.read_bytes() != rows[row_key]["image_path"].read_bytes():
-                    raise ValueError(f"Frames duplicados divergentes para {video_id}, frame {frame_index}")
-
+                labels: set[str] = set()
                 for line_number, line in enumerate(label_path.read_text(encoding="utf-8").splitlines(), start=1):
                     parts = line.split()
                     if len(parts) != 5:
@@ -93,14 +90,18 @@ def _read_tracking_annotations(tracking_root: Path) -> tuple[list[Annotation], i
                         raise ValueError(f"Coordenada não numérica: {label_path}:{line_number}") from error
                     if not all(math.isfinite(value) and 0 <= value <= 1 for value in coordinates):
                         raise ValueError(f"Coordenadas fora do intervalo [0, 1]: {label_path}:{line_number}")
-                    rows[row_key]["labels"].add(" ".join(parts))
+                    labels.add(" ".join(parts))
 
-    annotations = [
-        Annotation(image_path=value["image_path"], source_video=video_id, frame_index=frame_index,
-                   labels=tuple(sorted(value["labels"])))
-        for (video_id, frame_index), value in sorted(rows.items())
-    ]
-    return annotations, empty_runs
+                rows.append(Annotation(
+                    image_path=image_path,
+                    tracking_run=run_dir.name,
+                    tool_class=class_dir.name,
+                    source_video=video_id,
+                    frame_index=frame_index,
+                    labels=tuple(sorted(labels)),
+                ))
+
+    return rows, empty_runs
 
 
 def validate_tracking_data(tracking_root: Path) -> DatasetSummary:
@@ -120,101 +121,51 @@ def validate_tracking_data(tracking_root: Path) -> DatasetSummary:
     )
 
 
-def _partition_temporal_blocks(
-    annotations: list[Annotation],
-    seed: int,
-    block_seconds: float,
-    gap_seconds: float,
-    fps: float,
-) -> tuple[dict[tuple[str, int], str], set[tuple[str, int]], dict[str, list[dict[str, object]]]]:
-    if block_seconds <= 0 or fps <= 0:
-        raise ValueError("A duração do bloco e o FPS precisam ser positivos.")
-    if gap_seconds < 0 or gap_seconds >= block_seconds:
-        raise ValueError("A lacuna deve ser maior ou igual a zero e menor que a duração do bloco.")
+def _allocate_split_counts(total: int, ratios: dict[str, float]) -> dict[str, int]:
+    exact = {name: total * ratio for name, ratio in ratios.items()}
+    counts = {name: math.floor(value) for name, value in exact.items()}
+    remaining = total - sum(counts.values())
+    for name in sorted(exact, key=lambda key: (-(exact[key] - counts[key]), tuple(ratios).index(key))):
+        if remaining == 0:
+            break
+        counts[name] += 1
+        remaining -= 1
+    if total >= 3 and any(counts[name] == 0 for name in counts):
+        raise ValueError("Cada ferramenta precisa ter ao menos 3 imagens para preencher treino, validação e teste.")
+    return counts
 
-    block_frames = max(1, round(block_seconds * fps))
-    gap_frames = round(gap_seconds * fps)
-    rows_by_block: dict[tuple[str, int], list[Annotation]] = {}
+
+def _stratified_random_split(
+    annotations: list[Annotation], seed: int, ratios: dict[str, float]
+) -> dict[Path, str]:
+    """Sorteia imagens separadamente por ferramenta/rastreamento, sem fundir frames."""
+    grouped: dict[str, list[Annotation]] = {}
     for annotation in annotations:
-        block_index = annotation.frame_index // block_frames
-        rows_by_block.setdefault((annotation.source_video, block_index), []).append(annotation)
-
-    blocks = sorted(rows_by_block)
-    if len(blocks) < 3:
-        raise ValueError(
-            f"Foram encontrados apenas {len(blocks)} blocos temporais ocupados. "
-            "São necessários ao menos 3; diminua --block-seconds."
-        )
-
+        grouped.setdefault(annotation.tool_class, []).append(annotation)
     rng = random.Random(seed)
-    shuffled = list(blocks)
-    rng.shuffle(shuffled)
-    # Mantém blocos inteiros e busca aproximar 70/15/15 pelo número de imagens,
-    # não apenas pela quantidade de blocos (que podem ter densidades diferentes).
-    shuffled.sort(key=lambda key: -len(rows_by_block[key]))
-    split_names = ("train", "val", "test")
-    total_images = sum(len(items) for items in rows_by_block.values())
-    targets = {"train": total_images * 0.70, "val": total_images * 0.15, "test": total_images * 0.15}
-    assigned_counts = {split: 0 for split in split_names}
-    split_by_block: dict[tuple[str, int], str] = {}
-    for index, block_key in enumerate(shuffled):
-        weight = len(rows_by_block[block_key])
-        if index < len(split_names):
-            split = split_names[index]
-        else:
-            def imbalance(candidate: str) -> float:
-                return sum(
-                    abs((assigned_counts[name] + (weight if name == candidate else 0) - targets[name]) / targets[name])
-                    for name in split_names
-                )
-            split = min(split_names, key=lambda name: (imbalance(name), split_names.index(name)))
-        split_by_block[block_key] = split
-        assigned_counts[split] += weight
-
-    excluded: set[tuple[str, int]] = set()
-    blocks_by_video: dict[str, list[tuple[str, int]]] = {}
-    for block_key in blocks:
-        blocks_by_video.setdefault(block_key[0], []).append(block_key)
-    if gap_frames:
-        for video_id, video_blocks in blocks_by_video.items():
-            for previous, following in zip(video_blocks, video_blocks[1:]):
-                if split_by_block[previous] == split_by_block[following]:
-                    continue
-                previous_end = max(item.frame_index for item in rows_by_block[previous])
-                following_start = min(item.frame_index for item in rows_by_block[following])
-                midpoint = (previous_end + following_start) / 2
-                for block_key in (previous, following):
-                    for annotation in rows_by_block[block_key]:
-                        if abs(annotation.frame_index - midpoint) < gap_frames / 2:
-                            excluded.add((video_id, annotation.frame_index))
-
-    manifest: dict[str, list[dict[str, object]]] = {}
-    for video_id, video_blocks in sorted(blocks_by_video.items()):
-        manifest[video_id] = []
-        for _, block_index in video_blocks:
-            block_annotations = rows_by_block[(video_id, block_index)]
-            manifest[video_id].append({
-                "block_index": block_index,
-                "start_frame": block_index * block_frames,
-                "end_frame_exclusive": (block_index + 1) * block_frames,
-                "start_seconds": round(block_index * block_seconds, 3),
-                "end_seconds": round((block_index + 1) * block_seconds, 3),
-                "first_annotated_frame": min(item.frame_index for item in block_annotations),
-                "last_annotated_frame": max(item.frame_index for item in block_annotations),
-                "split": split_by_block[(video_id, block_index)],
-            })
-    return split_by_block, excluded, manifest
+    assignments: dict[Path, str] = {}
+    for tool_class, samples in sorted(grouped.items()):
+        if len(samples) < 3:
+            raise ValueError(f"A ferramenta {tool_class} tem menos de 3 imagens e não pode preencher as 3 partições.")
+        rng.shuffle(samples)
+        counts = _allocate_split_counts(len(samples), ratios)
+        cursor = 0
+        for split in ratios:
+            for sample in samples[cursor:cursor + counts[split]]:
+                assignments[sample.image_path] = split
+            cursor += counts[split]
+    return assignments
 
 
 def prepare_yolo_dataset(
     tracking_root: Path,
     output_dir: Path,
     seed: int = 42,
-    block_seconds: float = 30.0,
-    gap_seconds: float = 2.0,
-    fps: float = 25.0,
+    train_ratio: float = 0.80,
+    val_ratio: float = 0.10,
+    test_ratio: float = 0.10,
 ) -> DatasetSummary:
-    """Valida fontes e recria output_dir com partições de blocos temporais."""
+    """Recria output_dir com imagens sorteadas por ferramenta em 80/10/10."""
     annotations, empty_runs = _read_tracking_annotations(tracking_root)
     if not annotations:
         raise ValueError(f"Nenhuma imagem anotada encontrada em {tracking_root}")
@@ -225,22 +176,10 @@ def prepare_yolo_dataset(
     if output_dir == Path(output_dir.anchor) or output_dir == Path.home().resolve():
         raise ValueError(f"Destino inseguro para recriação: {output_dir}")
 
-    split_by_block, excluded_frames, temporal_manifest = _partition_temporal_blocks(
-        annotations, seed, block_seconds, gap_seconds, fps
-    )
-    retained_annotations = [
-        annotation for annotation in annotations
-        if (annotation.source_video, annotation.frame_index) not in excluded_frames
-    ]
-    present_splits = {
-        split_by_block[(item.source_video, item.frame_index // max(1, round(block_seconds * fps)))]
-        for item in retained_annotations
-    }
-    if present_splits != {"train", "val", "test"}:
-        raise ValueError(
-            "A lacuna temporal removeu todos os frames de uma partição. "
-            "Reduza --gap-seconds ou --block-seconds e tente novamente."
-        )
+    ratios = {"train": train_ratio, "val": val_ratio, "test": test_ratio}
+    if any(value <= 0 for value in ratios.values()) or not math.isclose(sum(ratios.values()), 1.0, abs_tol=1e-8):
+        raise ValueError("As proporções de treino, validação e teste devem ser positivas e somar 1.0.")
+    split_by_image = _stratified_random_split(annotations, seed, ratios)
 
     # A solicitação exige uma preparação limpa: removemos apenas o destino exato informado.
     if output_dir.exists():
@@ -255,23 +194,26 @@ def prepare_yolo_dataset(
 
     class_counts = {name: 0 for name in TOOL_CLASSES}
     split_counts = {"train": 0, "val": 0, "test": 0}
-    excluded_by_video: dict[str, list[int]] = {}
-    for video_id, frame_index in sorted(excluded_frames):
-        excluded_by_video.setdefault(video_id, []).append(frame_index)
-
-    for annotation in retained_annotations:
-        block_key = (
-            annotation.source_video,
-            annotation.frame_index // max(1, round(block_seconds * fps)),
-        )
-        split = split_by_block[block_key]
+    split_class_counts = {split: {name: 0 for name in TOOL_CLASSES} for split in split_counts}
+    image_manifest = {split: [] for split in split_counts}
+    for annotation in annotations:
+        split = split_by_image[annotation.image_path]
         split_counts[split] += 1
-        base_name = f"{annotation.source_video}_frame_{annotation.frame_index:06d}"
+        base_name = f"{annotation.tool_class}_{annotation.tracking_run}_frame_{annotation.frame_index:06d}"
         shutil.copy2(annotation.image_path, output_dir / "images" / split / f"{base_name}.jpg")
         label_file = output_dir / "labels" / split / f"{base_name}.txt"
         label_file.write_text("\n".join(annotation.labels) + ("\n" if annotation.labels else ""), encoding="utf-8")
         for label in annotation.labels:
-            class_counts[TOOL_CLASSES[int(label.split()[0])]] += 1
+            class_name = TOOL_CLASSES[int(label.split()[0])]
+            class_counts[class_name] += 1
+            split_class_counts[split][class_name] += 1
+        image_manifest[split].append({
+            "tool": annotation.tool_class,
+            "tracking_run": annotation.tracking_run,
+            "video": annotation.source_video,
+            "frame": annotation.frame_index,
+            "filename": f"{base_name}.jpg",
+        })
 
     yaml_lines = [
         f"path: {output_dir.as_posix()}",
@@ -285,14 +227,12 @@ def prepare_yolo_dataset(
     (output_dir / "split_manifest.json").write_text(
         json.dumps(
             {
-                "strategy": "temporal_blocks",
+                "strategy": "random_per_tool",
                 "seed": seed,
-                "fps": fps,
-                "block_seconds": block_seconds,
-                "gap_seconds": gap_seconds,
+                "ratios": {"train": train_ratio, "val": val_ratio, "test": test_ratio},
                 "split_image_counts": split_counts,
-                "videos": temporal_manifest,
-                "excluded_frames_near_split_boundaries": excluded_by_video,
+                "split_class_image_counts": split_class_counts,
+                "images": image_manifest,
             },
             ensure_ascii=False,
             indent=2,
@@ -301,9 +241,8 @@ def prepare_yolo_dataset(
     )
 
     return DatasetSummary(
-        image_count=len(retained_annotations),
-        video_count=len({item.source_video for item in retained_annotations}),
+        image_count=len(annotations),
+        video_count=len({item.source_video for item in annotations}),
         empty_runs=empty_runs,
         class_counts=class_counts,
-        excluded_frames=len(excluded_frames),
     )

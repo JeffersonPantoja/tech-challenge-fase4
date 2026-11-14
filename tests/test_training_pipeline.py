@@ -4,8 +4,7 @@ import tempfile
 import unittest
 
 from video_review.application.dataset import (
-    Annotation,
-    _partition_temporal_blocks,
+    _read_tracking_annotations,
     prepare_yolo_dataset,
     validate_tracking_data,
 )
@@ -42,41 +41,38 @@ class DatasetPreparationTests(unittest.TestCase):
         self.assertEqual(summary.empty_runs, 1)
         self.assertEqual(summary.class_counts["grasper"], 3)
 
-    def test_prepare_cleans_target_and_splits_contiguous_temporal_blocks(self):
-        # Nove blocos de um mesmo vídeo devem alimentar train/val/test sem split por vídeo.
-        for block in range(9):
-            for offset in (0, 300, 700, 749):
-                self._add_sample("grasper", 0, "video01", block * 750 + offset)
+    def test_prepare_stratifies_by_tool_without_merging_same_video_frames(self):
+        for tool, class_id in (("grasper", 0), ("hook", 2)):
+            for frame in range(20):
+                self._add_sample(tool, class_id, "video01", frame)
         output = self.root / "dataset"
         output.mkdir()
         (output / "stale.txt").write_text("stale", encoding="utf-8")
 
-        summary = prepare_yolo_dataset(self.tracking, output, seed=42, block_seconds=30, gap_seconds=2)
+        annotations, _ = _read_tracking_annotations(self.tracking)
+        summary = prepare_yolo_dataset(self.tracking, output, seed=42)
 
         self.assertFalse((output / "stale.txt").exists())
         self.assertTrue((output / "data.yaml").is_file())
-        self.assertLess(summary.image_count, 36)
-        self.assertGreater(summary.excluded_frames, 0)
+        self.assertEqual(summary.image_count, 40)
+        self.assertEqual(len(annotations), 40)
         manifest = json.loads((output / "split_manifest.json").read_text(encoding="utf-8"))
-        block_splits = {block["split"] for block in manifest["videos"]["video01"]}
-        self.assertEqual(block_splits, {"train", "val", "test"})
-        self.assertEqual(manifest["strategy"], "temporal_blocks")
-        self.assertEqual(manifest["gap_seconds"], 2)
+        self.assertEqual(manifest["strategy"], "random_per_tool")
+        self.assertEqual(manifest["split_image_counts"], {"train": 32, "val": 4, "test": 4})
+        self.assertEqual(manifest["split_class_image_counts"]["train"]["grasper"], 16)
+        self.assertEqual(manifest["split_class_image_counts"]["val"]["hook"], 2)
         self.assertEqual(
-            sum(len(list((output / "images" / split).glob("*.jpg"))) for split in ("train", "val", "test")),
-            summary.image_count,
+            sum(len(list((output / "images" / split).glob("*.jpg"))) for split in ("train", "val", "test")), 40
         )
+        # Mesmo vídeo/frame em ferramentas distintas permanece como duas amostras independentes.
+        names = [path.name for split in ("train", "val", "test") for path in (output / "images" / split).glob("*.jpg")]
+        self.assertEqual(len(names), len(set(names)))
 
-    def test_temporal_block_split_is_deterministic_and_requires_three_blocks(self):
-        annotations = [
-            Annotation(Path("frame.jpg"), "video01", frame * 750, ())
-            for frame in range(4)
-        ]
-        first = _partition_temporal_blocks(annotations, 7, 30, 2, 25)
-        second = _partition_temporal_blocks(annotations, 7, 30, 2, 25)
-        self.assertEqual(first, second)
-        with self.assertRaises(ValueError):
-            _partition_temporal_blocks(annotations[:2], 7, 30, 2, 25)
+    def test_split_is_deterministic_and_requires_at_least_three_images_per_tool(self):
+        for frame in range(2):
+            self._add_sample("grasper", 0, "video01", frame)
+        with self.assertRaisesRegex(ValueError, "menos de 3 imagens"):
+            prepare_yolo_dataset(self.tracking, self.root / "dataset", seed=7)
 
     def test_validation_rejects_wrong_class_id(self):
         self._add_sample("hook", 1, "video01", 10)
