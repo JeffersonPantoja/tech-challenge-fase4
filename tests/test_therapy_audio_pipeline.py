@@ -27,7 +27,10 @@ class ProcessTherapyVideoTests(unittest.TestCase):
     def test_runs_all_steps_and_returns_artifacts(self) -> None:
         audio_path = self.output_dir / "sessao-001.wav"
 
-        def extract(_video_path: Path, output_path: Path, _duration: int | None = None) -> Path:
+        def extract(
+            _video_path: Path, output_path: Path,
+            _duration: int | None = None, _start: int = 0,
+        ) -> Path:
             output_path.parent.mkdir(parents=True, exist_ok=True)
             output_path.write_bytes(b"wav")
             return output_path
@@ -42,7 +45,7 @@ class ProcessTherapyVideoTests(unittest.TestCase):
         self.assertEqual(result.transcript, "fala de teste")
         self.assertEqual(result.sentiment, "NEUTRAL")
         self.assertEqual(result.transcript_path.read_text(encoding="utf-8"), "fala de teste\n")
-        self.extractor.extract.assert_called_once_with(self.video.resolve(), audio_path, None)
+        self.extractor.extract.assert_called_once_with(self.video.resolve(), audio_path, None, 0)
         self.transcriber.transcribe.assert_called_once_with(audio_path)
         self.analyzer.analyze.assert_called_once_with("fala de teste")
 
@@ -56,7 +59,10 @@ class ProcessTherapyVideoTests(unittest.TestCase):
         (self.output_dir / "sessao-001.wav").write_bytes(b"existing")
         (self.output_dir / "sessao-001-transcricao.txt").write_text("existing", encoding="utf-8")
 
-        def extract(_video_path: Path, output_path: Path, _duration: int | None = None) -> Path:
+        def extract(
+            _video_path: Path, output_path: Path,
+            _duration: int | None = None, _start: int = 0,
+        ) -> Path:
             output_path.parent.mkdir(parents=True, exist_ok=True)
             output_path.write_bytes(b"wav")
             return output_path
@@ -70,7 +76,10 @@ class ProcessTherapyVideoTests(unittest.TestCase):
         self.assertEqual(result.transcript_path.name, "sessao-002-transcricao.txt")
 
     def test_preserves_audio_and_removes_partial_transcript_if_later_step_fails(self) -> None:
-        def extract(_video_path: Path, output_path: Path, _duration: int | None = None) -> Path:
+        def extract(
+            _video_path: Path, output_path: Path,
+            _duration: int | None = None, _start: int = 0,
+        ) -> Path:
             output_path.parent.mkdir(parents=True, exist_ok=True)
             output_path.write_bytes(b"wav")
             return output_path

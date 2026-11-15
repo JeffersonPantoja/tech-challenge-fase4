@@ -3,7 +3,11 @@ from pathlib import Path
 
 class MoviePyAudioExtractor:
     def extract(
-        self, video_path: Path, output_path: Path, duration_seconds: int | None = None
+        self,
+        video_path: Path,
+        output_path: Path,
+        duration_seconds: int | None = None,
+        start_seconds: int = 0,
     ) -> Path:
         try:
             from moviepy import VideoFileClip
@@ -22,13 +26,21 @@ class MoviePyAudioExtractor:
             if clip.audio is None:
                 raise RuntimeError(f"O vídeo não contém faixa de áudio: {video_path}")
             audio = clip.audio
+            if start_seconds >= clip.duration:
+                raise ValueError(
+                    f"O início do período ({start_seconds}s) está fora da duração do vídeo "
+                    f"({clip.duration:.1f}s)."
+                )
             if duration_seconds is not None:
-                if duration_seconds > clip.duration:
+                end_seconds = start_seconds + duration_seconds
+                if end_seconds > clip.duration:
                     raise ValueError(
-                        f"A duração do teste ({duration_seconds}s) excede a duração do vídeo "
+                        f"O período termina em {end_seconds}s, além da duração do vídeo "
                         f"({clip.duration:.1f}s)."
                     )
-                audio = audio.subclipped(0, duration_seconds)
+                audio = audio.subclipped(start_seconds, end_seconds)
+            elif start_seconds:
+                audio = audio.subclipped(start_seconds, clip.duration)
             audio.write_audiofile(
                 str(output_path),
                 fps=16000,

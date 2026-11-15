@@ -7,7 +7,11 @@ from therapy_audio.models import TherapyAudioRequest, TherapyAudioResult
 
 class AudioExtractor(Protocol):
     def extract(
-        self, video_path: Path, output_path: Path, duration_seconds: int | None = None
+        self,
+        video_path: Path,
+        output_path: Path,
+        duration_seconds: int | None = None,
+        start_seconds: int = 0,
     ) -> Path: ...
 
 
@@ -48,6 +52,8 @@ class ProcessTherapyVideo:
             raise ValueError("Formato de vídeo não suportado. Use MP4, MOV, MKV, AVI ou WebM.")
         if request.test_duration_seconds is not None and request.test_duration_seconds <= 0:
             raise ValueError("A duração do teste deve ser um número de segundos maior que zero.")
+        if request.start_seconds < 0:
+            raise ValueError("O início do período não pode ser negativo.")
 
         output_dir.mkdir(parents=True, exist_ok=True)
         sequence = 1
@@ -63,7 +69,10 @@ class ProcessTherapyVideo:
         produced_transcript = False
         try:
             produced_audio = self._audio_extractor.extract(
-                video_path, audio_path, request.test_duration_seconds
+                video_path,
+                audio_path,
+                request.test_duration_seconds,
+                request.start_seconds,
             )
             transcript = self._transcriber.transcribe(produced_audio).strip()
             if not transcript:

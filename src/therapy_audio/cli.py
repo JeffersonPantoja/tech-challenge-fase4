@@ -40,7 +40,20 @@ def build_parser() -> argparse.ArgumentParser:
         "--test-seconds",
         type=int,
         metavar="SEGUNDOS",
-        help="Processar somente os primeiros N segundos do vídeo para teste (ex.: 60)",
+        help="Atalho: processar os primeiros N segundos (equivale a --start-seconds 0 --duration-seconds N)",
+    )
+    parser.add_argument(
+        "--start-seconds",
+        type=int,
+        default=0,
+        metavar="SEGUNDOS",
+        help="Início do período do vídeo em segundos (padrão: 0)",
+    )
+    parser.add_argument(
+        "--duration-seconds",
+        type=int,
+        metavar="SEGUNDOS",
+        help="Duração do período a processar; omitindo, vai do início até o fim do vídeo",
     )
     parser.add_argument(
         "--verbose",
@@ -52,6 +65,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.test_seconds is not None and args.duration_seconds is not None:
+        build_parser().error("--test-seconds não pode ser usado junto com --duration-seconds")
+    if args.test_seconds is not None and args.start_seconds != 0:
+        build_parser().error("--test-seconds processa desde o início; não use com --start-seconds")
+    duration_seconds = args.duration_seconds if args.test_seconds is None else args.test_seconds
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else logging.INFO,
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
@@ -70,7 +88,8 @@ def main(argv: list[str] | None = None) -> int:
                 video_path,
                 output_dir,
                 args.aws_region,
-                test_duration_seconds=args.test_seconds,
+                test_duration_seconds=duration_seconds,
+                start_seconds=args.start_seconds,
             )
         )
     except (FileNotFoundError, FileExistsError, RuntimeError, ValueError) as error:

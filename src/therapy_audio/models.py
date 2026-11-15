@@ -8,6 +8,7 @@ class TherapyAudioRequest:
     output_dir: Path
     aws_region: str = "us-east-1"
     test_duration_seconds: int | None = None
+    start_seconds: int = 0
 
 
 @dataclass(frozen=True)
