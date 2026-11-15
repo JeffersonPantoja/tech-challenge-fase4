@@ -2,11 +2,11 @@
 
 ## Visão geral
 
-Proposta de um protótipo acadêmico que analisa vídeos de colecistectomia laparoscópica do dataset Cholec80 para sinalizar **possíveis ocorrências fora do padrão** e facilitar a revisão posterior por uma pessoa. O sistema não confirma anomalias clínicas, não diagnostica e não deve orientar procedimentos cirúrgicos reais.
+Este documento registra o escopo acadêmico do pipeline de visão computacional em `src/video_review/`. A implementação atual rastreia instrumentos em vídeos, prepara dados YOLO, treina um detector e gera resultados para revisão humana. O sistema não confirma anomalias clínicas, não diagnostica e não deve orientar procedimentos cirúrgicos reais.
 
 ## Objetivo
 
-Construir e avaliar um pipeline experimental que use detecção e rastreamento de instrumentos cirúrgicos para destacar frames ou intervalos que mereçam revisão humana. Em uma etapa posterior, investigar se objetos que não correspondam às classes de instrumentos conhecidas podem gerar candidatos a revisão. Isso não equivale a detectar uma anomalia clínica: o protótipo não confirma anomalias, não diagnostica e não orienta procedimentos reais.
+Construir e avaliar um pipeline experimental de detecção e rastreamento de instrumentos cirúrgicos, produzindo evidências auditáveis para revisão humana. A geração de candidatos por objetos desconhecidos ou ocorrências fora do padrão permanece uma investigação futura: a detecção atual não implementa nem valida detecção de anomalias.
 
 ## Base de dados
 
@@ -14,31 +14,34 @@ O Cholec80 contém vídeos de colecistectomias laparoscópicas, rótulos de fase
 
 As anotações de presença não equivalem necessariamente a localizações de objetos. Um detector que produza caixas delimitadoras (*bounding boxes*) requer anotações espaciais apropriadas; não se deve presumir que estejam disponíveis para todas as ferramentas e frames.
 
-## Fluxo proposto
+## Fluxo implementado e limites
 
-O fluxo inicial será deliberadamente simples, seguindo o exemplo de rastreamento da wiki:
+O fluxo implementado é deliberadamente simples e segue o exemplo de rastreamento da wiki:
 
-1. Abrir um vídeo e selecionar manualmente, em um frame inicial, a caixa da ferramenta a rastrear; registrar a classe da ferramenta.
-2. Inicializar um rastreador visual do OpenCV (KCF ou CSRT) com esse frame e caixa, e acompanhar a região nos frames seguintes do vídeo.
-3. Salvar um vídeo de saída com as caixas desenhadas e, junto dele, os dados das caixas por frame em formato estruturado. O vídeo anotado serve para inspeção; os dados estruturados das coordenadas/classes são necessários para formar rótulos de treinamento.
-4. Revisar manualmente o resultado rastreado, corrigindo ou descartando caixas quando houver deriva, oclusão ou perda do objeto. Só caixas validadas poderão compor os dados de treinamento.
-5. Separar os vídeos por procedimento em treino, validação e teste, sem distribuir frames do mesmo vídeo entre partições. Treinar/ajustar o YOLOv8 com frames e caixas validadas; avaliar em vídeos mantidos fora do treino.
-6. Como etapa posterior e experimental, investigar candidatos a revisão com base em baixa confiança ou evidência não explicada pelas classes conhecidas. Uma detecção ausente ou objeto não reconhecido não será considerado automaticamente uma anomalia; será apresentado para revisão humana.
+1. Abrir um vídeo e selecionar manualmente a caixa inicial de uma ferramenta; registrar a classe.
+2. Inicializar o rastreador OpenCV (KCF ou CSRT) e propagar a caixa pelos frames.
+3. Salvar imagens e labels YOLO da execução de rastreamento; revisar e corrigir ou descartar caixas com deriva, oclusão ou perda do objeto.
+4. Validar as imagens, labels e IDs de classe e preparar `data.yaml` e `split_manifest.json`.
+5. Treinar YOLOv8, usar validação para acompanhar o treino e manter o split de teste fora da seleção do modelo; executar inferência e inspecionar vídeo/CSV.
+6. Opcionalmente, procurar a primeira classe prevista em uma sequência configurável de frames consecutivos e produzir artefatos de relatório. O envio do frame selecionado à OpenAI é opt-in.
+
+O split implementado é aleatório e estratificado por classe/ferramenta, com padrão 80% treino, 10% validação e 10% teste. Frames próximos do mesmo vídeo podem cair em partições diferentes; portanto, essa divisão não satisfaz o requisito de avaliação independente por procedimento descrito abaixo e pode superestimar métricas. A preparação mantém execuções de rastreamento separadas, mesmo quando vídeo e frame de origem coincidem.
 
 O Cholec80 pode ajudar a escolher frames por presença de ferramenta, mas seus rótulos binários não definem a caixa inicial nem substituem a identificação visual e a validação manual. O procedimento deve respeitar as condições de uso e citação do dataset.
 
-## Saídas esperadas
+## Saídas implementadas e objetivos pendentes
 
-- Vídeo de saída com caixas rastreadas, para inspeção manual.
-- Coordenadas, classe, frame e timestamp das caixas em formato estruturado, mantendo a ligação com o vídeo de origem.
-- Conjunto de frames e caixas revisados, separado por vídeo/procedimento em treino, validação e teste, para treinamento e avaliação do YOLOv8.
-- Em etapa posterior, lista de candidatos a revisão e registro da validação humana, se essa funcionalidade for implementada.
+- Rastreamentos por ferramenta com imagens e labels YOLO para revisão.
+- Dataset YOLO preparado, incluindo `data.yaml` e `split_manifest.json` com partições e amostras.
+- Pesos e métricas de treino Ultralytics; vídeo anotado e CSV de detecções na inferência.
+- Para `first-tool-report`, frame JPEG, relatório Markdown e metadados JSON da primeira detecção estável; descrição OpenAI somente quando solicitada explicitamente.
+- Permanecem objetivos não atendidos: partição independente por vídeo/procedimento e implementação/avaliação de detecção de anomalias.
 
 ## Avaliação
 
 - Verificar visualmente e corrigir as caixas do rastreador antes de usá-las como rótulos de treinamento.
-- Separar treino, validação e teste por vídeo/procedimento antes de treinar; frames do mesmo vídeo não podem cruzar essas partições.
-- Avaliar o detector em vídeos não usados no treinamento e relatar erros, inclusive oclusão, desfoque e enquadramento incompleto.
+- O código atual separa imagens aleatoriamente por ferramenta, não por vídeo/procedimento. Para afirmar generalização a procedimentos independentes, é necessário implementar e avaliar uma divisão agrupada por vídeo.
+- Avaliar erros incluindo oclusão, desfoque e enquadramento incompleto; não usar o teste para selecionar épocas ou ajustar parâmetros.
 - Se a etapa experimental de candidatos a revisão for implementada, avaliá-la separadamente do detector; métricas de detecção não comprovam detecção de anomalias.
 
 ## Limitações e segurança
@@ -56,7 +59,7 @@ O Cholec80 pode ajudar a escolher frames por presença de ferramenta, mas seus r
 
 ## Critério de sucesso acadêmico
 
-Demonstrar um pipeline reprodutível que identifica fases/instrumentos conforme os rótulos disponíveis, produz alertas rastreáveis para revisão humana e avalia quantitativamente seus acertos e limitações, sem alegar validação clínica.
+Demonstrar um pipeline reprodutível de rastreamento e detecção de instrumentos, com saídas auditáveis para revisão humana e avaliação quantitativa de acertos e limitações, sem alegar validação clínica. A implementação atual não identifica fases cirúrgicas nem produz alertas de anomalia.
 
 ## Referências iniciais
 

@@ -2,30 +2,29 @@
 
 ## Visão geral
 
-Proposta de um pipeline acadêmico para processar um vídeo de demonstração de sessão de terapia, obtido do YouTube e disponibilizado localmente, extrair sua faixa de áudio, transcrever a fala e realizar análise de sentimento sobre o texto transcrito. Todo o fluxo será executado por um único comando CLI. A implementação deverá aproveitar os exemplos da wiki e seguir a arquitetura existente no projeto, sem ser criada dentro de `src/video-review`.
+Este documento registra os requisitos e o estado do pipeline acadêmico em `src/therapy_audio/`. Ele processa um vídeo local, extrai sua faixa de áudio, transcreve a fala em segmentos e analisa a polaridade textual por segmento. Todo o fluxo é executado por um único comando CLI e é independente do pipeline `src/video_review/`.
 
 ## Objetivo
 
-Criar scripts separados e reproduzíveis, orquestrados por um único comando CLI, para:
+Manter um pipeline reproduzível, orquestrado por um único comando CLI, para:
 
 1. Extrair o áudio do vídeo de entrada.
 2. Transcrever o áudio para texto.
-3. Analisar o sentimento da transcrição.
+3. Analisar a polaridade textual de cada segmento com AWS Comprehend e, opcionalmente, gerar análise contextual estruturada com OpenAI.
 
 ## Entrada
 
-- O caminho do vídeo local deve ser informado como argumento do comando CLI; não deve ficar fixo no código.
-- O vídeo inicialmente previsto para execução é `resources/dataset/sessao-terapia.mp4`, obtido de [https://www.youtube.com/watch?v=VS6YMAjdGZA](https://www.youtube.com/watch?v=VS6YMAjdGZA).
-- O pipeline recebe um caminho de vídeo por execução e não pressupõe outros vídeos ou datasets.
+- O CLI recebe um caminho de vídeo local por execução; o caminho não fica fixo no código. O vídeo deve estar em formato MP4, MOV, MKV, AVI ou WebM e conter faixa de áudio.
+- O vídeo inicialmente previsto para execução é `resources/dataset/sessao-terapia.mp4`, obtido de [https://www.youtube.com/watch?v=VS6YMAjdGZA](https://www.youtube.com/watch?v=VS6YMAjdGZA). O diretório/caminho é configurável: o pipeline aceita outros vídeos locais compatíveis.
 - O vídeo é uma demonstração de uma sessão de Terapia Cognitivo-Comportamental (TCC), conforme o título publicado no YouTube; não deve ser descrito como uma gravação clínica real sem confirmação independente.
 
-## Fluxo proposto
+## Fluxo implementado
 
 1. Um único comando CLI recebe o caminho do vídeo local como argumento, inicia e coordena todas as etapas, sem exigir comandos separados para extração, transcrição e análise.
-2. Ler o vídeo indicado no argumento CLI e extrair sua faixa de áudio para um arquivo de áudio em `resources/` ou em diretório de saída dedicado, preservando o vídeo original.
-3. Transcrever o arquivo de áudio em português brasileiro (`pt-BR`), salvando a transcrição em arquivo de texto.
-4. Carregar a transcrição e executar análise de sentimento, registrando a resposta produzida pela API AWS Comprehend, como no exemplo da wiki.
-5. Manter as etapas em scripts próprios e a orquestração CLI em diretório diferente de `src/video-review`, de acordo com as convenções e arquitetura do projeto.
+2. Extrair para WAV o intervalo solicitado do vídeo, preservando o vídeo original.
+3. Segmentar o áudio próximo a pausas e transcrever os trechos em português brasileiro (`pt-BR`), salvando texto e intervalos.
+4. Solicitar análise AWS Comprehend (`LanguageCode='pt'`) separadamente para cada transcrição; opcionalmente enviar texto e resultado AWS à OpenAI para análise contextual em JSON Schema.
+5. Manter CLI, caso de uso e adaptadores em `src/therapy_audio/`, separado de `src/video_review/`.
 
 ## Referência de implementação
 
@@ -38,10 +37,11 @@ Criar scripts separados e reproduzíveis, orquestrados por um único comando CLI
 ## Saídas esperadas
 
 - Arquivo de áudio extraído do vídeo.
-- Arquivo de texto com a transcrição.
-- Resultado da análise de sentimento associado à transcrição, em formato legível e, se adequado à arquitetura do projeto, estruturado.
+- Arquivo de texto com transcrição e intervalos dos segmentos.
+- Resultado AWS e pontuações associados individualmente a cada segmento, apresentados no terminal.
+- Quando solicitado, análise contextual OpenAI por segmento, também apresentada no terminal; ela não é persistida como arquivo pelo fluxo atual.
 - Um comando CLI documentado que recebe o caminho do vídeo e executa o fluxo completo na ordem definida.
-- Ao finalizar, o comando CLI deve apresentar no terminal o resultado final da análise de sentimento; pode também salvar os artefatos intermediários e resultados em arquivos.
+- O comando apresenta no terminal resultados por segmento e salva o WAV e a transcrição; resultados AWS/OpenAI não são persistidos em arquivo pelo fluxo atual.
 
 ## Avaliação
 
@@ -52,6 +52,9 @@ Criar scripts separados e reproduzíveis, orquestrados por um único comando CLI
 - Confirmar que a execução completa pode ser iniciada por um único comando CLI.
 - Confirmar que o caminho passado ao CLI é o vídeo processado e que, ao término, o resultado final é exibido no terminal.
 - Manter ligação entre cada saída e o vídeo de origem.
+- O código atual nomeia WAV e transcrição com sufixo sequencial e não sobrescreve artefatos existentes. Os trechos WAV temporários são removidos após a transcrição.
+- `--test-seconds` processa desde o início; não pode ser combinado com `--start-seconds` nem `--duration-seconds`. Sem duração, o intervalo vai do início indicado ao fim do vídeo.
+- A segmentação usa duração-alvo de 45 segundos, limiar de silêncio de -35 dBFS e silêncio mínimo de 350 ms; pode ultrapassar o alvo para evitar cortar fala e falha se não encontrar pausa utilizável.
 
 ## Limitações e segurança
 
@@ -59,8 +62,9 @@ Criar scripts separados e reproduzíveis, orquestrados por um único comando CLI
 - O pipeline não deverá inferir diagnóstico, estado clínico ou qualidade do tratamento a partir da transcrição ou do sentimento.
 - Análise de sentimento mede categorias de polaridade textual conforme a ferramenta utilizada; não equivale à avaliação psicológica da pessoa nem representa necessariamente o sentido clínico da sessão.
 - Áudio e transcrição podem conter informações pessoais sensíveis. O processamento deve respeitar consentimento, autorização de uso, licença e políticas de armazenamento aplicáveis.
-- Não enviar áudio, vídeo ou transcrição a serviços externos sem autorização e sem verificar as condições de privacidade e uso do serviço.
+- O áudio é enviado ao serviço Google Speech; os textos de cada segmento são enviados ao AWS Comprehend e, somente com `--openai-analysis`, também à OpenAI. Não executar sobre material real sem autorização e sem verificar as condições de privacidade e uso dos serviços.
 - Preservar o vídeo original; resultados e intermediários devem ser gravados em caminhos de saída definidos, sem sobrescrever a entrada.
+- As pontuações do Comprehend são confiança entre classes de polaridade textual, não intensidade emocional. A análise gerada por OpenAI é complementar, não validada factualmente nem clinicamente.
 
 ## Critério de sucesso acadêmico
 
@@ -77,9 +81,9 @@ Demonstrar um pipeline organizado e reproduzível que extrai áudio, gera uma tr
 ## Implementação
 
 - CLI: `PYTHONPATH=src python3 -m therapy_audio.cli caminho/do/video.mp4`.
-- Opções disponíveis: `--output-dir` para definir a pasta de artefatos e `--aws-region` para selecionar a região AWS.
+- Opções disponíveis incluem `--output-dir`, `--aws-region`, `--start-seconds`, `--duration-seconds`, `--test-seconds`, `--max-chunk-seconds` e `--openai-analysis`/`--openai-model`.
 - O pipeline foi implementado no pacote independente `src/therapy_audio/`, com CLI, caso de uso e adaptadores de infraestrutura, mantendo separação de responsabilidades.
-- O comando imprime no terminal o sentimento, as pontuações retornadas pelo Comprehend, a transcrição e os caminhos dos artefatos.
+- Por segmento, o comando imprime transcrição, sentimento e pontuações do Comprehend; com opt-in, imprime também a análise complementar OpenAI. Ao final, informa os caminhos do WAV e da transcrição.
 
 ## Origem do vídeo
 
