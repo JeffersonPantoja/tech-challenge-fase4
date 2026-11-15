@@ -1,10 +1,19 @@
 from pathlib import Path
+import json
+import os
+import sys
 import tempfile
+import types
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from therapy_audio.application.process_video import ProcessTherapyVideo
 from therapy_audio.infrastructure.google_speech_transcriber import GoogleSpeechTranscriber
+from therapy_audio.infrastructure.openai_segment_analyzer import (
+    ANALYSIS_SCHEMA,
+    SYSTEM_PROMPT,
+    OpenAISegmentAnalyzer,
+)
 from therapy_audio.models import TherapyAudioRequest, TranscriptSegment
 
 
@@ -166,6 +175,75 @@ class SilenceSegmentationTests(unittest.TestCase):
         transcriber = GoogleSpeechTranscriber(max_chunk_seconds=45)
         with self.assertRaisesRegex(RuntimeError, "Não foi encontrada pausa"):
             transcriber._split_at_silence(FakeSound(), FakeSilence)
+
+
+class OpenAISegmentAnalyzerTests(unittest.TestCase):
+    def test_sends_segment_and_aws_results_with_structured_output(self) -> None:
+        structured = {
+            "aws_sentiment_interpretation": "NEGATIVE",
+            "aws_scores_summary": "Negative dominante.",
+            "critical_terms": [],
+            "complementary_sentiment": "NEGATIVE",
+            "sentiment_context": "Tom negativo no trecho.",
+            "limitations": "Sem inferência clínica.",
+        }
+        response = Mock(output_text=json.dumps(structured))
+        client = Mock()
+        client.responses.create.return_value = response
+
+        fake_openai = types.SimpleNamespace(OpenAI=Mock(return_value=client))
+        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}), patch.dict(
+            sys.modules, {"openai": fake_openai}
+        ):
+            result = OpenAISegmentAnalyzer().analyze(
+                "Estou muito triste.", "NEGATIVE", {"Negative": 0.98, "Positive": 0.01}
+            )
+
+        self.assertEqual(result, structured)
+        fake_openai.OpenAI.assert_called_once_with()
+        kwargs = client.responses.create.call_args.kwargs
+        self.assertEqual(kwargs["model"], "gpt-5.4-mini")
+        self.assertEqual(kwargs["input"][0]["content"], SYSTEM_PROMPT)
+        self.assertEqual(kwargs["text"]["format"]["schema"], ANALYSIS_SCHEMA)
+        self.assertIn("Estou muito triste.", kwargs["input"][1]["content"])
+        self.assertIn('"sentiment": "NEGATIVE"', kwargs["input"][1]["content"])
+        self.assertIn('"Negative": 0.98', kwargs["input"][1]["content"])
+
+    def test_fails_without_api_key(self) -> None:
+        with patch.dict(os.environ, {}, clear=True):
+            with self.assertRaisesRegex(RuntimeError, "OPENAI_API_KEY"):
+                OpenAISegmentAnalyzer().analyze("texto", "NEUTRAL", {})
+
+
+class OptionalContextualAnalysisTests(ProcessTherapyVideoTests):
+    def test_passes_each_segment_aws_result_to_contextual_analyzer(self) -> None:
+        def extract(
+            _video_path: Path, output_path: Path,
+            _duration: int | None = None, _start: int = 0,
+        ) -> Path:
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            output_path.write_bytes(b"wav")
+            return output_path
+
+        self.extractor.extract.side_effect = extract
+        segments = [TranscriptSegment(1, 0, 10, "Estou triste.")]
+        self.transcriber.transcribe.return_value = segments
+        self.analyzer.analyze.return_value = ("NEGATIVE", {"Negative": 0.9})
+        contextual = Mock()
+        contextual.analyze.return_value = {"critical_terms": []}
+        use_case = ProcessTherapyVideo(
+            self.extractor, self.transcriber, self.analyzer, contextual
+        )
+        request = TherapyAudioRequest(
+            self.video, self.output_dir, openai_analysis=True
+        )
+
+        result = use_case.execute(request)
+
+        contextual.analyze.assert_called_once_with(
+            "Estou triste.", "NEGATIVE", {"Negative": 0.9}
+        )
+        self.assertEqual(result.segment_sentiments[0].gpt_analysis, {"critical_terms": []})
 
 
 if __name__ == "__main__":

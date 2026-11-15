@@ -7,6 +7,7 @@ from therapy_audio.application.process_video import ProcessTherapyVideo
 from therapy_audio.infrastructure.aws_comprehend_sentiment import AwsComprehendSentimentAnalyzer
 from therapy_audio.infrastructure.google_speech_transcriber import GoogleSpeechTranscriber
 from therapy_audio.infrastructure.moviepy_audio_extractor import MoviePyAudioExtractor
+from therapy_audio.infrastructure.openai_segment_analyzer import OpenAISegmentAnalyzer
 from therapy_audio.models import TherapyAudioRequest
 
 
@@ -60,6 +61,16 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Exibir logs técnicos detalhados (não inclui o conteúdo do áudio nem credenciais)",
     )
+    parser.add_argument(
+        "--openai-analysis",
+        action="store_true",
+        help="Complementar cada parte com análise OpenAI (requer OPENAI_API_KEY)",
+    )
+    parser.add_argument(
+        "--openai-model",
+        default="gpt-5.4-mini",
+        help="Modelo OpenAI para análise complementar (padrão: gpt-5.4-mini)",
+    )
     return parser
 
 
@@ -77,11 +88,15 @@ def main(argv: list[str] | None = None) -> int:
     video_path = args.video.expanduser().resolve()
     output_dir = args.output_dir.expanduser().resolve()
     try:
-        print("Aviso: o áudio será enviado ao reconhecimento de fala Google e o texto à AWS Comprehend.")
+        services = "o áudio será enviado ao reconhecimento de fala Google e o texto à AWS Comprehend"
+        if args.openai_analysis:
+            services += " e à OpenAI para análise complementar"
+        print(f"Aviso: {services}.")
         use_case = ProcessTherapyVideo(
             MoviePyAudioExtractor(),
             GoogleSpeechTranscriber(max_chunk_seconds=args.max_chunk_seconds),
             AwsComprehendSentimentAnalyzer(args.aws_region),
+            OpenAISegmentAnalyzer(args.openai_model) if args.openai_analysis else None,
         )
         result = use_case.execute(
             TherapyAudioRequest(
@@ -90,6 +105,8 @@ def main(argv: list[str] | None = None) -> int:
                 args.aws_region,
                 test_duration_seconds=duration_seconds,
                 start_seconds=args.start_seconds,
+                openai_analysis=args.openai_analysis,
+                openai_model=args.openai_model,
             )
         )
     except (FileNotFoundError, FileExistsError, RuntimeError, ValueError) as error:
@@ -111,6 +128,22 @@ def main(argv: list[str] | None = None) -> int:
         print("Pontuações:")
         for label, score in analysis.sentiment_scores.items():
             print(f"  {label}: {score:.4f}")
+        if analysis.gpt_analysis is not None:
+            print("Análise complementar GPT:")
+            gpt = analysis.gpt_analysis
+            print(f"  Interpretação AWS: {gpt['aws_sentiment_interpretation']}")
+            print(f"  Resumo das pontuações AWS: {gpt['aws_scores_summary']}")
+            print(f"  Sentimento complementar: {gpt['complementary_sentiment']}")
+            print(f"  Contexto: {gpt['sentiment_context']}")
+            print("  Termos críticos:")
+            if not gpt["critical_terms"]:
+                print("    Nenhum termo identificado com evidência suficiente.")
+            for term in gpt["critical_terms"]:
+                print(
+                    f"    {term['term']} ({term['category']}): {term['evidence']} — "
+                    f"{term['context']}"
+                )
+            print(f"  Limitações: {gpt['limitations']}")
     print(f"Áudio extraído: {result.audio_path}")
     print(f"Transcrição salva em: {result.transcript_path}")
     print("Interprete a classificação como polaridade textual, não como avaliação clínica.")

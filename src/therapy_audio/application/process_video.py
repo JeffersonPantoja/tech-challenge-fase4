@@ -28,6 +28,12 @@ class SentimentAnalyzer(Protocol):
     def analyze(self, text: str) -> tuple[str, dict[str, float]]: ...
 
 
+class ContextualAnalyzer(Protocol):
+    def analyze(
+        self, text: str, aws_sentiment: str, aws_scores: dict[str, float]
+    ) -> dict: ...
+
+
 @dataclass(frozen=True)
 class ProcessedTherapyVideo:
     audio_path: Path
@@ -42,10 +48,12 @@ class ProcessTherapyVideo:
         audio_extractor: AudioExtractor,
         transcriber: SpeechTranscriber,
         sentiment_analyzer: SentimentAnalyzer,
+        contextual_analyzer: ContextualAnalyzer | None = None,
     ) -> None:
         self._audio_extractor = audio_extractor
         self._transcriber = transcriber
         self._sentiment_analyzer = sentiment_analyzer
+        self._contextual_analyzer = contextual_analyzer
 
     def execute(self, request: TherapyAudioRequest) -> TherapyAudioResult:
         video_path = request.video_path.expanduser().resolve()
@@ -91,8 +99,17 @@ class ProcessTherapyVideo:
             segment_sentiments: list[SegmentSentiment] = []
             for segment in transcript_segments:
                 sentiment, scores = self._sentiment_analyzer.analyze(segment.text)
+                gpt_analysis = None
+                if request.openai_analysis:
+                    if self._contextual_analyzer is None:
+                        raise RuntimeError(
+                            "Análise GPT solicitada, mas o analisador OpenAI não foi configurado."
+                        )
+                    gpt_analysis = self._contextual_analyzer.analyze(
+                        segment.text, sentiment, scores
+                    )
                 segment_sentiments.append(
-                    SegmentSentiment(segment, sentiment, scores)
+                    SegmentSentiment(segment, sentiment, scores, gpt_analysis)
                 )
         except Exception:
             if produced_transcript:

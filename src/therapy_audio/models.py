@@ -9,6 +9,8 @@ class TherapyAudioRequest:
     aws_region: str = "us-east-1"
     test_duration_seconds: int | None = None
     start_seconds: int = 0
+    openai_analysis: bool = False
+    openai_model: str = "gpt-5.4-mini"
 
 
 @dataclass(frozen=True)
@@ -24,6 +26,7 @@ class SegmentSentiment:
     segment: TranscriptSegment
     sentiment: str
     sentiment_scores: dict[str, float]
+    gpt_analysis: dict | None = None
 
 
 @dataclass(frozen=True)
