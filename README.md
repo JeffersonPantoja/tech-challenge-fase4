@@ -1,8 +1,20 @@
-# Protótipo de revisão de vídeos cirúrgicos
+# Análise de vídeo e áudio
 
-Aplicação experimental para rastrear instrumentos em vídeos de colecistectomia, preparar imagens e caixas revisadas para YOLOv8, treinar um detector e executar inferência para apoiar revisão humana. Não confirma anomalias clínicas, não diagnostica e não deve orientar procedimentos ou decisões clínicas.
+Este repositório reúne **dois pipelines independentes**, com entradas, dependências e resultados próprios:
 
-## Arquitetura da implementação `video_review`
+1. **Visão computacional — `src/video_review/`**: rastreia instrumentos em vídeos cirúrgicos, prepara imagens e caixas revisadas para YOLOv8, treina um detector e executa inferência e geração de relatórios para revisão humana.
+2. **Áudio — `src/therapy_audio/`**: extrai áudio de um vídeo local, transcreve segmentos em português brasileiro e classifica a polaridade textual com AWS Comprehend. Opcionalmente, envia cada transcrição e sua classificação AWS à OpenAI para análise contextual estruturada.
+
+O segundo pipeline pode processar o áudio do vídeo de uma sessão de terapia mencionado no contexto acadêmico do projeto, mas aceita outros vídeos locais compatíveis; não depende do pipeline visual. Ambos são experimentais: não confirmam anomalias clínicas, não diagnosticam e não devem orientar procedimentos ou decisões clínicas. Confira autorização e privacidade antes de enviar vídeos, áudios, frames ou transcrições a serviços externos.
+
+## Visão geral das ferramentas
+
+| Ferramenta | Código | Funções principais | Seções deste README |
+|---|---|---|---|
+| Visão computacional | `src/video_review/` | Rastreamento, preparação do dataset, treino YOLOv8, inferência e relatório da primeira detecção estável | Arquitetura, rastreamento, dataset, treino, inferência e relatório visual |
+| Áudio | `src/therapy_audio/` | Extração, transcrição segmentada, polaridade por trecho com AWS Comprehend e análise OpenAI opcional | Arquitetura e pipeline de áudio |
+
+## Pipeline de visão computacional (`video_review`)
 
 O código da aplicação fica em `src/video_review/` e separa os casos de uso da integração com bibliotecas externas:
 
@@ -37,12 +49,75 @@ src/video_review/
 
 Essa separação mantém decisões de fluxo na camada `application` e detalhes de OpenCV/Ultralytics em `infrastructure`; `cli.py` conecta as duas.
 
+### Fluxo e limites
+
+1. Rastrear uma ferramenta por vez, selecionando manualmente uma região inicial.
+2. Revisar imagens e caixas; corrigir ou descartar rastreamentos com deriva, oclusão ou perda do objeto.
+3. Validar os rastreamentos e preparar o dataset YOLO.
+4. Treinar com treino/validação e reservar teste para avaliação final.
+5. Executar inferência e inspecionar vídeo anotado, CSV ou relatório da primeira detecção estável.
+
+O rastreamento propaga visualmente uma caixa e não garante anotação correta. O split aleatório por frames pode colocar frames próximos em partições diferentes; suas métricas não demonstram generalização para procedimentos independentes. As previsões são experimentais e requerem revisão humana.
+
+### Comandos
+
+Os comandos abaixo são executados na raiz do repositório e usam `PYTHONPATH=src`:
+
+```bash
+PYTHONPATH=src python3 -m video_review.cli --help
+PYTHONPATH=src python3 -m video_review.cli track --video resources/cholec80/videos/video01.mp4 --tool grasper --tracker CSRT
+PYTHONPATH=src python3 -m video_review.cli data validate
+PYTHONPATH=src python3 -m video_review.cli data prepare --seed 42
+```
+
+As etapas detalhadas de treino, avaliação, inferência e relatório estão nas seções abaixo.
+
+## Pipeline de áudio (`therapy_audio`)
+
+O pipeline recebe um caminho de vídeo local, extrai o intervalo de áudio solicitado, divide o áudio próximo a pausas, transcreve cada trecho em `pt-BR` e solicita ao AWS Comprehend uma classe e pontuações de polaridade por segmento. A análise contextual OpenAI é opcional e executada separadamente para cada trecho.
+
+```text
+src/therapy_audio/
+├── cli.py
+├── models.py
+├── application/
+│   └── process_video.py
+└── infrastructure/
+    ├── moviepy_audio_extractor.py
+    ├── google_speech_transcriber.py
+    ├── aws_comprehend_sentiment.py
+    └── openai_segment_analyzer.py
+```
+
+- **`cli.py`** define o intervalo, opções dos serviços e apresentação dos resultados.
+- **`models.py`** define solicitações, segmentos temporais e resultados.
+- **`application/process_video.py`** coordena extração, transcrição e análises, mantendo cada resultado AWS ligado ao segmento correspondente.
+- **`infrastructure/moviepy_audio_extractor.py`** extrai o áudio do período do vídeo.
+- **`infrastructure/google_speech_transcriber.py`** segmenta em pausas e transcreve em `pt-BR`.
+- **`infrastructure/aws_comprehend_sentiment.py`** classifica cada transcrição e retorna as pontuações AWS.
+- **`infrastructure/openai_segment_analyzer.py`** envia opcionalmente texto e resultado AWS à Responses API e solicita saída estruturada por JSON Schema.
+
+A CLI conecta o caso de uso aos adaptadores de infraestrutura. O fluxo não depende do detector de vídeo e pode ser executado sobre um vídeo local compatível com áudio.
+
+### Comandos
+
+```bash
+PYTHONPATH=src python3 -m therapy_audio.cli --help
+PYTHONPATH=src python3 -m therapy_audio.cli resources/cholec80/videos/video01.mp4 --test-seconds 60
+PYTHONPATH=src python3 -m therapy_audio.cli resources/cholec80/videos/video01.mp4 \
+  --start-seconds 300 --duration-seconds 120
+```
+
+O comando exige o caminho do vídeo. `--test-seconds N` processa desde o início e não pode ser combinado com `--start-seconds` nem `--duration-seconds`. Sem duração, processa do início especificado até o fim do vídeo.
+
+Por padrão, a CLI salva o WAV extraído e a transcrição com intervalos em `resources/therapy-audio/`, usando sufixos sequenciais para não sobrescrever esses artefatos; as classificações e eventuais análises complementares são exibidas no terminal.
+
 ## Organização das pastas do projeto
 
 ```text
 .
-├── src/video_review/                 # Implementação do pipeline de visão computacional
-├── src/therapy_audio/                 # Pipeline independente de áudio e sentimento
+├── src/video_review/                 # Pipeline independente de visão computacional
+├── src/therapy_audio/                # Pipeline independente de áudio e sentimento textual
 ├── resources/
 │   ├── cholec80/videos/              # Vídeos de entrada (não gerados pelo pipeline)
 │   ├── cholec80/tracking/            # Rastreamentos revisados, separados por ferramenta
@@ -56,21 +131,13 @@ Essa separação mantém decisões de fluxo na camada `application` e detalhes d
 
 Os diretórios de dados e resultados podem ser alterados por argumentos da CLI. Não presuma que vídeos ou modelos estejam incluídos no repositório; confira as condições de acesso e uso do Cholec80.
 
-## Fluxo atual
-
-1. Rastrear **uma ferramenta por vez** em um vídeo, escolhendo manualmente uma região inicial.
-2. Revisar as imagens e caixas produzidas pelo rastreador; corrigir ou descartar caixas com deriva, oclusão ou perda do objeto.
-3. Validar os rastreamentos e preparar o dataset YOLO.
-4. Treinar o detector usando treino e validação. O conjunto de teste fica reservado para avaliação final.
-5. Executar inferência em vídeos e inspecionar o vídeo anotado e o CSV de detecções.
-
-As pastas de rastreamento representam execuções independentes por ferramenta. A mesma origem de vídeo e índice de frame em duas pastas diferentes **não significa que sejam a mesma amostra anotada com duas ferramentas**. A preparação mantém essas amostras separadas.
+No pipeline visual, as pastas de rastreamento representam execuções independentes por ferramenta. A mesma origem de vídeo e índice de frame em duas pastas diferentes **não significa que sejam a mesma amostra anotada com duas ferramentas**. A preparação mantém essas amostras separadas.
 
 ## Requisitos e instalação
 
 - Python 3.10 ou superior recomendado.
-- OpenCV com suporte a trackers e interface gráfica para selecionar a região inicial.
-- Ultralytics YOLOv8.
+- Para `video_review`: OpenCV com suporte a trackers e interface gráfica para selecionar a região inicial, além de Ultralytics YOLOv8.
+- Para `therapy_audio`: MoviePy, SpeechRecognition, pydub, boto3 e, se a análise complementar for usada, SDK OpenAI.
 - Dependências Python listadas em `requirements.txt`.
 - Vídeos Cholec80 disponíveis localmente; este projeto não baixa os vídeos.
 
@@ -83,7 +150,7 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-Os comandos abaixo assumem execução na raiz do repositório e usam `PYTHONPATH=src`.
+Os comandos dos dois pipelines assumem execução na raiz do repositório e usam `PYTHONPATH=src`.
 
 ## Rastrear uma ferramenta
 
@@ -227,6 +294,12 @@ PYTHONPATH=src python3 -m video_review.cli detector first-tool-report \
 
 `--send-frame-to-openai` autoriza transmitir **o frame selecionado**, não o vídeo inteiro, à API externa. O uso pode gerar custos e deve respeitar as autorizações e regras de privacidade aplicáveis. A descrição GPT-4o é conteúdo gerado por IA e não confirma a classe do YOLO nem faz avaliação clínica. A chave não é gravada nos artefatos.
 
+### O que é enviado e solicitado ao GPT-4o
+
+Além do frame selecionado, a chamada inclui as previsões do YOLO como contexto textual: classes, confiança e coordenadas das caixas. O frame é codificado como JPEG; imagens com lado maior que 1536 pixels são reduzidas antes do envio. O prompt pede uma descrição objetiva apenas do que está visível, orientada a um relatório técnico de revisão humana. Informa que as classes são previsões ainda não verificadas e instrui o GPT-4o a não confirmá-las nem corrigi-las, não inferir diagnóstico, anomalia clínica, intenção ou condição do paciente e não recomendar procedimentos. Também solicita que explicite incertezas e diferencie observações visuais dos metadados fornecidos.
+
+A resposta é registrada no relatório Markdown e no JSON. Ela não é uma segunda detecção nem validação independente do YOLO; a imagem e a descrição devem ser revisadas por uma pessoa.
+
 Opções principais: `--start-seconds` define o início (padrão 0); `--end-seconds` define o fim exclusivo (padrão: até o fim); `--conf` define confiança mínima (padrão 0,25); `--consecutive-frames` controla a confirmação consecutiva (padrão 3); `--device` escolhe dispositivo; `--output-dir` altera o destino (padrão `resources/results`); `--openai-model` define o modelo de visão (padrão `gpt-4o`). O comando falha se não houver detecção confirmada no trecho. Os artefatos incluem frame JPEG, relatório `.md` e metadados `.json`; saídas existentes com o mesmo nome não são sobrescritas.
 
 ## Classes do detector
@@ -253,29 +326,59 @@ PYTHONPATH=src python3 -m unittest discover -s tests -v
 
 Os testes de preparação usam fixtures temporárias e não recriam o dataset real.
 
-## Pipeline de áudio de sessão de terapia
+## Executar o pipeline de áudio
 
-O pacote independente `src/therapy_audio/` extrai o áudio de um vídeo local, transcreve em português brasileiro e analisa o sentimento da transcrição com AWS Comprehend. O fluxo inteiro é executado por um comando, seguindo o padrão CLI → aplicação → adaptadores de infraestrutura:
-
-```bash
-PYTHONPATH=src python3 -m therapy_audio.cli resources/dataset/sessao-terapia.mp4
-```
-
-Para adicionar a análise contextual GPT em cada trecho (termos críticos evidenciados, interpretação do sentimento AWS e sentimento complementar), configure `OPENAI_API_KEY` no ambiente e acrescente `--openai-analysis`. O modelo padrão é `gpt-5.4-mini`, alterável com `--openai-model`:
+O caminho de um vídeo local é obrigatório. Exemplo processando os primeiros 60 segundos:
 
 ```bash
-PYTHONPATH=src python3 -m therapy_audio.cli resources/dataset/sessao-terapia.mp4 --test-seconds 60 --openai-analysis
+PYTHONPATH=src python3 -m therapy_audio.cli resources/cholec80/videos/video01.mp4 --test-seconds 60
 ```
 
-Essa opção faz uma chamada OpenAI por trecho e envia a transcrição, a classe AWS e suas pontuações. Sem a opção, o pipeline usa somente AWS como antes. A resposta OpenAI segue JSON Schema estrito e exige evidência textual para os termos identificados; isso garante o formato, não a correção factual da interpretação.
+O comando extrai o WAV, cria um arquivo de transcrição com os intervalos das partes e mostra no terminal o texto, o sentimento e as pontuações AWS por segmento. Os resultados são apresentados separadamente e não combinam transcrições de segmentos diferentes.
 
-O caminho do vídeo é obrigatório. Use `--output-dir` para escolher a pasta dos artefatos (por padrão, `resources/therapy-audio/`) e `--aws-region` para configurar a região do Comprehend (padrão `us-east-1`). O comando salva o WAV e a transcrição e apresenta no terminal o sentimento, suas pontuações e o texto transcrito. Cada execução escolhe automaticamente um sufixo sequencial (`-001`, `-002` etc.) que não colida com artefatos anteriores.
+Para analisar outro período, informe início e duração em segundos. Por exemplo, do segundo 300 ao 420:
 
-Para processar um período arbitrário, informe início e duração em segundos. Por exemplo, para processar do segundo 300 ao 420 (do minuto 5 ao 7): `--start-seconds 300 --duration-seconds 120`. O fluxo extrai e analisa apenas esse intervalo. Para processar do início por N segundos, use o atalho `--test-seconds N` (não combinável com `--start-seconds` ou `--duration-seconds`).
+```bash
+PYTHONPATH=src python3 -m therapy_audio.cli resources/cholec80/videos/video01.mp4 \
+  --start-seconds 300 --duration-seconds 120
+```
 
-O adaptador de transcrição usa `SpeechRecognition` com o serviço Google em `pt-BR`, conforme o exemplo da wiki; o áudio é enviado ao serviço externo. Para gravações longas, o áudio é dividido em trechos de até 45 segundos, buscando pontos de corte no centro de pausas detectadas (limiar padrão de -35 dBFS, silêncio mínimo de 350 ms). Apenas quando não há pausa detectada antes do limite, o código procura a próxima pausa, podendo criar um trecho maior; se não houver pausa posterior, a transcrição falha sem enviar um corte no meio da fala. `--max-chunk-seconds` ajusta a duração alvo. Os WAVs temporários dos trechos são removidos ao final, mas o áudio completo extraído é preservado. Cada trecho transcrito é enviado separadamente à API `DetectSentiment` do AWS Comprehend, e o terminal apresenta sentimento e pontuações por parte. Com `--openai-analysis`, cada trecho e a respectiva resposta AWS também são enviados à Responses API. Cada chamada por trecho pode aumentar o uso/custo dos serviços. Configure `OPENAI_API_KEY` e as credenciais AWS pelo mecanismo padrão de cada SDK. Instale as dependências com `python3 -m pip install -r requirements.txt`.
+Para processar desde o início por N segundos, use `--test-seconds N`; essa opção não pode ser combinada com `--start-seconds` ou `--duration-seconds`. Sem duração, o processamento segue do ponto inicial até o final do vídeo.
 
-Essa análise expressa apenas a classificação de polaridade textual devolvida pelo Comprehend; não é diagnóstico, avaliação psicológica nem medida clínica. Verifique autorização, privacidade e termos de uso antes de enviar gravações ou transcrições a serviços externos. O pipeline não foi executado contra a gravação real como parte dos testes automatizados.
+### Análise contextual opcional com OpenAI
+
+Para complementar a análise de cada trecho, configure `OPENAI_API_KEY` no ambiente e acrescente `--openai-analysis`. O modelo padrão é `gpt-5.4-mini`, alterável com `--openai-model`:
+
+```bash
+PYTHONPATH=src python3 -m therapy_audio.cli resources/cholec80/videos/video01.mp4 \
+  --test-seconds 60 --openai-analysis
+```
+
+Cada chamada envia à Responses API o texto de um segmento, a classe AWS (`POSITIVE`, `NEGATIVE`, `NEUTRAL` ou `MIXED`) e as pontuações das quatro classes. O prompt orienta a tratar a resposta AWS como referência, identificar expressões relevantes apenas com evidência literal, explicar o contexto, indicar sentimento complementar e não inferir diagnóstico. Structured Outputs solicita campos JSON para interpretação AWS, resumo das pontuações, termos, evidências, contexto e limitações. O schema valida a estrutura da resposta, não garante que a interpretação seja factual.
+
+Sem `--openai-analysis`, não há chamada à OpenAI e a análise permanece apenas AWS. Com a opção ativa, há uma chamada OpenAI por segmento, além das chamadas AWS, o que pode aumentar custo e tempo de processamento. A chave é lida de `OPENAI_API_KEY`, não deve ser incluída no código ou nos argumentos do comando.
+
+### Segmentação, arquivos e opções
+
+O transcritor usa `SpeechRecognition` com o serviço Google em `pt-BR`; portanto, os trechos de áudio são enviados ao Google. O áudio é dividido buscando o centro de pausas detectadas: duração-alvo de 45 segundos (`--max-chunk-seconds`), limiar padrão de -35 dBFS e silêncio mínimo de 350 ms. Se não houver pausa utilizável antes do limite, o algoritmo procura uma pausa posterior; se não encontrar uma, a transcrição falha em vez de cortar no meio da fala. Os WAVs temporários dos trechos são removidos ao final; o WAV extraído completo é preservado.
+
+Cada segmento reconhecido é enviado separadamente ao AWS Comprehend (`DetectSentiment`, idioma `pt`) e, quando solicitado, à Responses API. As credenciais AWS usam o mecanismo padrão do SDK (`boto3`). Instale as dependências com `python3 -m pip install -r requirements.txt`.
+
+Argumentos principais:
+
+- `--output-dir`: pasta de saída (padrão `resources/therapy-audio/`).
+- `--aws-region`: região AWS (padrão `us-east-1`).
+- `--start-seconds` e `--duration-seconds`: intervalo do vídeo.
+- `--test-seconds`: atalho para processar desde o início por N segundos.
+- `--max-chunk-seconds`: duração-alvo dos trechos de transcrição (padrão 45 segundos).
+- `--openai-analysis`: habilita a análise complementar OpenAI, opt-in.
+- `--openai-model`: modelo de análise OpenAI (padrão `gpt-5.4-mini`).
+
+Os artefatos são nomeados com sufixo sequencial (`-001`, `-002` etc.) para não sobrescrever resultados existentes. O WAV completo e o arquivo `-transcricao.txt` são salvos em `resources/therapy-audio/` por padrão; os resultados da análise são apresentados no terminal.
+
+### Privacidade e limites de interpretação
+
+O áudio é enviado ao serviço de reconhecimento Google; o texto é enviado ao AWS Comprehend e, somente com `--openai-analysis`, também à OpenAI. Antes de processar gravações, verifique autorização, privacidade, retenção e termos aplicáveis. As pontuações AWS expressam confiança entre classes de polaridade textual, não intensidade emocional. Nem AWS nem GPT produzem, neste pipeline, diagnóstico ou avaliação clínica; a análise é experimental e requer revisão humana. Os testes automatizados usam mocks e não enviam gravações reais aos serviços externos.
 
 ## Materiais e ferramentas documentais
 
