@@ -1,3 +1,7 @@
 # OpenCV with KCF/CSRT trackers and GUI support for selecting the initial ROI.
 opencv-contrib-python>=4.10,<5
 ultralytics>=8.3,<9
+SpeechRecognition>=3.10,<4
+moviepy>=2.0,<3
+pydub>=0.25,<1
+boto3>=1.34,<2

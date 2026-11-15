@@ -38,6 +38,7 @@ Essa separação mantém decisões de fluxo na camada `application` e detalhes d
 ```text
 .
 ├── src/video_review/                 # Implementação do pipeline de visão computacional
+├── src/therapy_audio/                 # Pipeline independente de áudio e sentimento
 ├── resources/
 │   ├── cholec80/videos/              # Vídeos de entrada (não gerados pelo pipeline)
 │   ├── cholec80/tracking/            # Rastreamentos revisados, separados por ferramenta
@@ -217,6 +218,22 @@ PYTHONPATH=src python3 -m unittest discover -s tests -v
 ```
 
 Os testes de preparação usam fixtures temporárias e não recriam o dataset real.
+
+## Pipeline de áudio de sessão de terapia
+
+O pacote independente `src/therapy_audio/` extrai o áudio de um vídeo local, transcreve em português brasileiro e analisa o sentimento da transcrição com AWS Comprehend. O fluxo inteiro é executado por um comando, seguindo o padrão CLI → aplicação → adaptadores de infraestrutura:
+
+```bash
+PYTHONPATH=src python3 -m therapy_audio.cli resources/dataset/sessao-terapia.mp4
+```
+
+O caminho do vídeo é obrigatório. Use `--output-dir` para escolher a pasta dos artefatos (por padrão, `resources/therapy-audio/`) e `--aws-region` para configurar a região do Comprehend (padrão `us-east-1`). O comando salva o WAV e a transcrição e apresenta no terminal o sentimento, suas pontuações e o texto transcrito. Cada execução escolhe automaticamente um sufixo sequencial (`-001`, `-002` etc.) que não colida com artefatos anteriores.
+
+Para um teste rápido com apenas o início do vídeo, use `--test-seconds N`, por exemplo `--test-seconds 60`. O parâmetro limita a extração aos primeiros N segundos, mas ainda executa transcrição e análise de sentimento nesse trecho.
+
+O adaptador de transcrição usa `SpeechRecognition` com o serviço Google em `pt-BR`, conforme o exemplo da wiki; o áudio é enviado ao serviço externo. Para gravações longas, o áudio é dividido em trechos de até 45 segundos, buscando pontos de corte no centro de pausas detectadas (limiar padrão de -35 dBFS, silêncio mínimo de 350 ms). Apenas quando não há pausa detectada antes do limite, o código procura a próxima pausa, podendo criar um trecho maior; se não houver pausa posterior, a transcrição falha sem enviar um corte no meio da fala. `--max-chunk-seconds` ajusta a duração alvo. Os WAVs temporários dos trechos são removidos ao final, mas o áudio completo extraído é preservado. A análise usa `boto3`/AWS Comprehend com `LanguageCode="pt"`; a transcrição também é enviada à AWS. Configure as credenciais AWS pelo mecanismo padrão do SDK. Instale as dependências com `python3 -m pip install -r requirements.txt`.
+
+Essa análise expressa apenas a classificação de polaridade textual devolvida pelo Comprehend; não é diagnóstico, avaliação psicológica nem medida clínica. Verifique autorização, privacidade e termos de uso antes de enviar gravações ou transcrições a serviços externos. O pipeline não foi executado contra a gravação real como parte dos testes automatizados.
 
 ## Materiais e ferramentas documentais
 
