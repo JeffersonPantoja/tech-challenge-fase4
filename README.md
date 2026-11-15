@@ -14,11 +14,13 @@ src/video_review/
 │   ├── track_video.py
 │   ├── dataset.py
 │   ├── train_detector.py
-│   └── predict_video.py
+│   ├── predict_video.py
+│   └── first_tool_report.py
 └── infrastructure/
     ├── opencv_video_tracker.py
     ├── ultralytics_trainer.py
-    └── ultralytics_video_predictor.py
+    ├── ultralytics_video_predictor.py
+    └── first_tool_report_adapters.py
 ```
 
 - **`cli.py`** define os subcomandos `track`, `data` e `detector`, seus argumentos, valores padrão e apresenta os resultados no terminal.
@@ -27,9 +29,11 @@ src/video_review/
 - **`application/dataset.py`** lê e valida imagens/labels, atribui amostras às partições e materializa a estrutura YOLO, `data.yaml` e `split_manifest.json`.
 - **`application/train_detector.py`** coordena o treino e retorna o caminho dos melhores pesos.
 - **`application/predict_video.py`** coordena a inferência em um vídeo e os artefatos produzidos.
+- **`application/first_tool_report.py`** seleciona a primeira classe detectada em uma sequência consecutiva de frames e monta o relatório auditável.
 - **`infrastructure/opencv_video_tracker.py`** implementa captura de vídeo, seleção da região inicial e rastreamento usando OpenCV (CSRT/KCF).
 - **`infrastructure/ultralytics_trainer.py`** integra o caso de uso de treino com Ultralytics.
 - **`infrastructure/ultralytics_video_predictor.py`** integra a inferência e exportação de vídeo/CSV com Ultralytics e OpenCV.
+- **`infrastructure/first_tool_report_adapters.py`** lê o trecho com OpenCV, consulta o YOLO frame a frame e, somente com opt-in, envia o frame escolhido à OpenAI para descrição visual.
 
 Essa separação mantém decisões de fluxo na camada `application` e detalhes de OpenCV/Ultralytics em `infrastructure`; `cli.py` conecta as duas.
 
@@ -112,7 +116,7 @@ PYTHONPATH=src python3 -m video_review.cli data prepare --seed 42
 
 Por padrão, cada ferramenta é dividida em **80% treino, 10% validação e 10% teste**. As proporções podem ser alteradas com `--train-ratio`, `--val-ratio` e `--test-ratio`, desde que somem 1.0. A seed controla a reprodutibilidade do sorteio.
 
-O sorteio é feito separadamente para as imagens de cada ferramenta/rastreamento. As amostras não são fundidas entre pastas, mesmo quando têm o mesmo vídeo e número de frame. Cada amostra preparada contém os labels YOLO do próprio rastreamento.
+O sorteio é feito separadamente por classe de ferramenta, agregando as imagens de suas execuções de rastreamento. As amostras não são fundidas entre pastas, mesmo quando têm o mesmo vídeo e número de frame. Cada amostra preparada contém os labels YOLO do próprio rastreamento.
 
 O destino padrão é `resources/datasets/cholec80-yolo/`. A preparação **remove e recria somente o destino configurado**; confira `--output` antes de executar se já houver dados nesse caminho. A saída contém:
 
@@ -194,6 +198,36 @@ PYTHONPATH=src python3 -m video_review.cli detector predict \
 ```
 
 A inferência salva um vídeo anotado e um CSV de detecções; o terminal informa os caminhos. O vídeo pode ocupar bastante espaço. As detecções são resultados experimentais para inspeção humana: ausência de detecção não prova ausência do instrumento nem identifica, por si só, um objeto anômalo.
+
+## Primeira ferramenta detectada e relatório GPT-4o
+
+O comando abaixo procura a primeira classe prevista em pelo menos três frames consecutivos dentro do intervalo indicado. O frame salvo é o primeiro frame dessa sequência; o relatório também informa o frame em que a sequência foi confirmada. Se mais de uma classe atingir a confirmação no mesmo frame, todas são registradas em ordem de ID de classe.
+
+```bash
+PYTHONPATH=src python3 -m video_review.cli detector first-tool-report \
+  --video resources/cholec80/videos/video01.mp4 \
+  --weights runs/detect/cholec80-yolov8n/weights/best.pt \
+  --start-seconds 0 \
+  --end-seconds 120 \
+  --conf 0.25 \
+  --consecutive-frames 3 \
+  --output-dir resources/results
+```
+
+Sem opção adicional, a busca e os artefatos são locais e **nenhum frame é enviado à OpenAI**. Para pedir ao GPT-4o uma descrição visual do frame selecionado, configure sua chave no ambiente e use o opt-in explícito:
+
+```bash
+export OPENAI_API_KEY="sua-chave"
+PYTHONPATH=src python3 -m video_review.cli detector first-tool-report \
+  --video resources/cholec80/videos/video01.mp4 \
+  --weights runs/detect/cholec80-yolov8n/weights/best.pt \
+  --start-seconds 0 --end-seconds 120 \
+  --send-frame-to-openai
+```
+
+`--send-frame-to-openai` autoriza transmitir **o frame selecionado**, não o vídeo inteiro, à API externa. O uso pode gerar custos e deve respeitar as autorizações e regras de privacidade aplicáveis. A descrição GPT-4o é conteúdo gerado por IA e não confirma a classe do YOLO nem faz avaliação clínica. A chave não é gravada nos artefatos.
+
+Opções principais: `--start-seconds` define o início (padrão 0); `--end-seconds` define o fim exclusivo (padrão: até o fim); `--conf` define confiança mínima (padrão 0,25); `--consecutive-frames` controla a confirmação consecutiva (padrão 3); `--device` escolhe dispositivo; `--output-dir` altera o destino (padrão `resources/results`); `--openai-model` define o modelo de visão (padrão `gpt-4o`). O comando falha se não houver detecção confirmada no trecho. Os artefatos incluem frame JPEG, relatório `.md` e metadados `.json`; saídas existentes com o mesmo nome não são sobrescritas.
 
 ## Classes do detector
 

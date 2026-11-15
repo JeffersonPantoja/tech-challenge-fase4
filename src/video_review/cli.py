@@ -3,12 +3,18 @@ from pathlib import Path
 import sys
 
 from video_review.application.dataset import prepare_yolo_dataset, validate_tracking_data
+from video_review.application.first_tool_report import FirstToolReport, FirstToolReportRequest
 from video_review.application.predict_video import PredictVideo, PredictionRequest
 from video_review.application.train_detector import TrainDetector, TrainingRequest
 from video_review.application.track_video import TOOL_CLASSES, TrackVideo
 from video_review.infrastructure.opencv_video_tracker import OpenCvVideoTracker
 from video_review.infrastructure.ultralytics_trainer import UltralyticsTrainer
 from video_review.infrastructure.ultralytics_video_predictor import UltralyticsVideoPredictor
+from video_review.infrastructure.first_tool_report_adapters import (
+    OpenAIVisionAnalyzer,
+    OpenCvFrameSource,
+    UltralyticsFrameDetector,
+)
 from video_review.models import TrackingRequest
 
 
@@ -67,6 +73,27 @@ def _add_detector_parser(subparsers) -> None:
     predict.add_argument("--conf", type=float, default=0.25, help="Confiança mínima entre 0 e 1")
     predict.add_argument("--device", default=None, help="Ex.: 0, cpu; padrão: seleção automática Ultralytics")
     predict.set_defaults(handler=_predict_video)
+
+    first_report = commands.add_parser(
+        "first-tool-report", help="Encontrar a primeira ferramenta estável em um trecho e gerar relatório"
+    )
+    first_report.add_argument("--video", type=Path, required=True)
+    first_report.add_argument("--weights", type=Path, required=True, help="Pesos YOLO .pt treinados")
+    first_report.add_argument("--start-seconds", type=float, default=0.0, help="Início do trecho em segundos")
+    first_report.add_argument("--end-seconds", type=float, default=None, help="Fim exclusivo do trecho em segundos")
+    first_report.add_argument("--conf", type=float, default=0.25, help="Confiança mínima entre 0 e 1")
+    first_report.add_argument(
+        "--consecutive-frames", type=int, default=3,
+        help="Frames consecutivos exigidos para confirmar uma classe (padrão: 3)",
+    )
+    first_report.add_argument("--device", default=None, help="Ex.: 0, cpu; padrão: seleção automática Ultralytics")
+    first_report.add_argument("--output-dir", type=Path, default=PROJECT_ROOT / "resources/results")
+    first_report.add_argument("--openai-model", default="gpt-4o", help="Modelo de visão OpenAI")
+    first_report.add_argument(
+        "--send-frame-to-openai", action="store_true",
+        help="Autoriza enviar externamente o frame selecionado para análise OpenAI",
+    )
+    first_report.set_defaults(handler=_first_tool_report)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -159,6 +186,35 @@ def _predict_video(args) -> int:
     print(f"Detecções: {result.detection_count}")
     print(f"Vídeo anotado: {result.output_video}")
     print(f"Detecções por frame: {result.detections_csv}")
+    return 0
+
+
+def _first_tool_report(args) -> int:
+    request = FirstToolReportRequest(
+        video_path=_path(args.video),
+        weights_path=_path(args.weights),
+        output_dir=_path(args.output_dir),
+        start_seconds=args.start_seconds,
+        end_seconds=args.end_seconds,
+        confidence=args.conf,
+        consecutive_frames=args.consecutive_frames,
+        device=args.device,
+        send_frame_to_openai=args.send_frame_to_openai,
+        openai_model=args.openai_model,
+    )
+    analyzer = OpenAIVisionAnalyzer() if args.send_frame_to_openai else None
+    detector = UltralyticsFrameDetector(request.weights_path)
+    result = FirstToolReport(OpenCvFrameSource(), detector, analyzer).execute(request)
+    print(f"Primeira ferramenta prevista: {', '.join(item.detection.class_name for item in result.detections)}")
+    print(f"Frame inicial da sequência: {result.frame_index} ({result.timestamp_seconds:.3f}s)")
+    print(f"Frame de confirmação: {result.confirmation_frame_index}")
+    print(f"Frame salvo: {result.frame_path}")
+    print(f"Relatório Markdown: {result.markdown_path}")
+    print(f"Relatório JSON: {result.json_path}")
+    if result.vision_description is not None:
+        print("Frame enviado à OpenAI para descrição visual.")
+    else:
+        print("Análise GPT-4o não solicitada; nenhum frame foi enviado à OpenAI.")
     return 0
 
 
