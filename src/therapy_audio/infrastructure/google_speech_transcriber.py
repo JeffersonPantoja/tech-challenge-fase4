@@ -1,6 +1,8 @@
 from pathlib import Path
 import logging
 
+from therapy_audio.models import TranscriptSegment
+
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +24,7 @@ class GoogleSpeechTranscriber:
         self._min_silence_ms = min_silence_ms
         self._silence_padding_ms = silence_padding_ms
 
-    def transcribe(self, audio_path: Path) -> str:
+    def transcribe(self, audio_path: Path) -> list[TranscriptSegment]:
         try:
             import speech_recognition as sr
             from pydub import AudioSegment, silence
@@ -53,7 +55,7 @@ class GoogleSpeechTranscriber:
                 self._min_silence_ms,
             )
 
-            transcripts: list[str] = []
+            transcripts: list[TranscriptSegment] = []
             for index, (start_ms, end_ms) in enumerate(chunks, start=1):
                 chunk_path = chunks_dir / f"chunk-{index:04d}.wav"
                 sound[start_ms:end_ms].export(chunk_path, format="wav")
@@ -73,11 +75,19 @@ class GoogleSpeechTranscriber:
                 except sr.UnknownValueError:
                     logger.warning("Fala não reconhecida no trecho %d; continuando.", index)
                     continue
-                transcripts.append(text.strip())
-            transcript = " ".join(text for text in transcripts if text).strip()
-            if not transcript:
+                text = text.strip()
+                if text:
+                    transcripts.append(
+                        TranscriptSegment(
+                            index=index,
+                            start_seconds=start_ms / 1000,
+                            end_seconds=end_ms / 1000,
+                            text=text,
+                        )
+                    )
+            if not transcripts:
                 raise RuntimeError("O serviço não reconheceu fala em nenhum trecho do áudio.")
-            return transcript
+            return transcripts
         except sr.UnknownValueError as error:
             logger.exception("Google Speech Recognition recebeu áudio, mas não o compreendeu.")
             raise RuntimeError("O serviço de reconhecimento não conseguiu entender o áudio.") from error

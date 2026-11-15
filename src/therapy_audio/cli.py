@@ -99,12 +99,18 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Erro: {error}", file=sys.stderr)
         return 1
 
-    print("\n=== Resultado da análise de sentimento ===")
-    print(f"Sentimento: {result.sentiment}")
-    print("Pontuações:")
-    for label, score in result.sentiment_scores.items():
-        print(f"  {label}: {score:.4f}")
-    print(f"Transcrição: {result.transcript}")
+    print("\n=== Análise de sentimento por parte ===")
+    for analysis in result.segment_sentiments:
+        segment = analysis.segment
+        print(
+            f"\nParte {segment.index} "
+            f"({segment.start_seconds:.2f}s–{segment.end_seconds:.2f}s)"
+        )
+        print(f"Transcrição: {segment.text}")
+        print(f"Sentimento: {analysis.sentiment}")
+        print("Pontuações:")
+        for label, score in analysis.sentiment_scores.items():
+            print(f"  {label}: {score:.4f}")
     print(f"Áudio extraído: {result.audio_path}")
     print(f"Transcrição salva em: {result.transcript_path}")
     print("Interprete a classificação como polaridade textual, não como avaliação clínica.")

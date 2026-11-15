@@ -12,10 +12,24 @@ class TherapyAudioRequest:
 
 
 @dataclass(frozen=True)
+class TranscriptSegment:
+    index: int
+    start_seconds: float
+    end_seconds: float
+    text: str
+
+
+@dataclass(frozen=True)
+class SegmentSentiment:
+    segment: TranscriptSegment
+    sentiment: str
+    sentiment_scores: dict[str, float]
+
+
+@dataclass(frozen=True)
 class TherapyAudioResult:
     audio_path: Path
     transcript_path: Path
     transcript: str
-    sentiment: str
-    sentiment_scores: dict[str, float]
+    segment_sentiments: list[SegmentSentiment]
     aws_region: str

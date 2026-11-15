@@ -5,7 +5,7 @@ from unittest.mock import Mock
 
 from therapy_audio.application.process_video import ProcessTherapyVideo
 from therapy_audio.infrastructure.google_speech_transcriber import GoogleSpeechTranscriber
-from therapy_audio.models import TherapyAudioRequest
+from therapy_audio.models import TherapyAudioRequest, TranscriptSegment
 
 
 class ProcessTherapyVideoTests(unittest.TestCase):
@@ -36,18 +36,49 @@ class ProcessTherapyVideoTests(unittest.TestCase):
             return output_path
 
         self.extractor.extract.side_effect = extract
-        self.transcriber.transcribe.return_value = "fala de teste"
+        self.transcriber.transcribe.return_value = [
+            TranscriptSegment(1, 0.0, 10.0, "fala de teste")
+        ]
         self.analyzer.analyze.return_value = ("NEUTRAL", {"Positive": 0.1, "Negative": 0.1, "Neutral": 0.8, "Mixed": 0.0})
 
         result = self.use_case.execute(self.request)
 
         self.assertEqual(result.audio_path, audio_path)
-        self.assertEqual(result.transcript, "fala de teste")
-        self.assertEqual(result.sentiment, "NEUTRAL")
-        self.assertEqual(result.transcript_path.read_text(encoding="utf-8"), "fala de teste\n")
+        self.assertEqual(result.transcript, "[0.00s–10.00s] fala de teste")
+        self.assertEqual(result.segment_sentiments[0].sentiment, "NEUTRAL")
+        self.assertEqual(
+            result.transcript_path.read_text(encoding="utf-8"),
+            "[0.00s–10.00s] fala de teste\n",
+        )
         self.extractor.extract.assert_called_once_with(self.video.resolve(), audio_path, None, 0)
         self.transcriber.transcribe.assert_called_once_with(audio_path)
         self.analyzer.analyze.assert_called_once_with("fala de teste")
+
+    def test_analyzes_sentiment_separately_for_each_transcribed_segment(self) -> None:
+        def extract(
+            _video_path: Path, output_path: Path,
+            _duration: int | None = None, _start: int = 0,
+        ) -> Path:
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            output_path.write_bytes(b"wav")
+            return output_path
+
+        self.extractor.extract.side_effect = extract
+        segments = [
+            TranscriptSegment(1, 0, 12, "Estou bem."),
+            TranscriptSegment(2, 12, 24, "Tenho sentido ansiedade."),
+        ]
+        self.transcriber.transcribe.return_value = segments
+        self.analyzer.analyze.side_effect = [
+            ("POSITIVE", {"Positive": 0.9}),
+            ("NEGATIVE", {"Negative": 0.8}),
+        ]
+
+        result = self.use_case.execute(self.request)
+
+        self.assertEqual([item.sentiment for item in result.segment_sentiments], ["POSITIVE", "NEGATIVE"])
+        self.assertEqual(self.analyzer.analyze.call_args_list[0].args, ("Estou bem.",))
+        self.assertEqual(self.analyzer.analyze.call_args_list[1].args, ("Tenho sentido ansiedade.",))
 
     def test_rejects_missing_video(self) -> None:
         request = TherapyAudioRequest(self.root / "missing.mp4", self.output_dir)
@@ -68,7 +99,9 @@ class ProcessTherapyVideoTests(unittest.TestCase):
             return output_path
 
         self.extractor.extract.side_effect = extract
-        self.transcriber.transcribe.return_value = "fala de teste"
+        self.transcriber.transcribe.return_value = [
+            TranscriptSegment(1, 0, 10, "fala de teste")
+        ]
         self.analyzer.analyze.return_value = ("NEUTRAL", {})
         result = self.use_case.execute(self.request)
 
@@ -85,7 +118,9 @@ class ProcessTherapyVideoTests(unittest.TestCase):
             return output_path
 
         self.extractor.extract.side_effect = extract
-        self.transcriber.transcribe.return_value = "fala de teste"
+        self.transcriber.transcribe.return_value = [
+            TranscriptSegment(1, 0, 10, "fala de teste")
+        ]
         self.analyzer.analyze.side_effect = RuntimeError("AWS indisponível")
 
         with self.assertRaisesRegex(RuntimeError, "AWS indisponível"):

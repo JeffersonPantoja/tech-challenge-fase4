@@ -2,7 +2,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
 
-from therapy_audio.models import TherapyAudioRequest, TherapyAudioResult
+from therapy_audio.models import (
+    SegmentSentiment,
+    TherapyAudioRequest,
+    TherapyAudioResult,
+    TranscriptSegment,
+)
 
 
 class AudioExtractor(Protocol):
@@ -16,7 +21,7 @@ class AudioExtractor(Protocol):
 
 
 class SpeechTranscriber(Protocol):
-    def transcribe(self, audio_path: Path) -> str: ...
+    def transcribe(self, audio_path: Path) -> list[TranscriptSegment]: ...
 
 
 class SentimentAnalyzer(Protocol):
@@ -28,8 +33,7 @@ class ProcessedTherapyVideo:
     audio_path: Path
     transcript_path: Path
     transcript: str
-    sentiment: str
-    sentiment_scores: dict[str, float]
+    segment_sentiments: list[SegmentSentiment]
 
 
 class ProcessTherapyVideo:
@@ -74,12 +78,22 @@ class ProcessTherapyVideo:
                 request.test_duration_seconds,
                 request.start_seconds,
             )
-            transcript = self._transcriber.transcribe(produced_audio).strip()
-            if not transcript:
+            transcript_segments = self._transcriber.transcribe(produced_audio)
+            transcript_segments = [segment for segment in transcript_segments if segment.text.strip()]
+            if not transcript_segments:
                 raise RuntimeError("O serviço de transcrição não retornou texto.")
+            transcript = "\n".join(
+                f"[{segment.start_seconds:.2f}s–{segment.end_seconds:.2f}s] {segment.text.strip()}"
+                for segment in transcript_segments
+            )
             transcript_path.write_text(transcript + "\n", encoding="utf-8")
             produced_transcript = True
-            sentiment, scores = self._sentiment_analyzer.analyze(transcript)
+            segment_sentiments: list[SegmentSentiment] = []
+            for segment in transcript_segments:
+                sentiment, scores = self._sentiment_analyzer.analyze(segment.text)
+                segment_sentiments.append(
+                    SegmentSentiment(segment, sentiment, scores)
+                )
         except Exception:
             if produced_transcript:
                 transcript_path.unlink(missing_ok=True)
@@ -89,7 +103,6 @@ class ProcessTherapyVideo:
             audio_path=audio_path,
             transcript_path=transcript_path,
             transcript=transcript,
-            sentiment=sentiment,
-            sentiment_scores=scores,
+            segment_sentiments=segment_sentiments,
             aws_region=request.aws_region,
         )
