@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.9.13)  14 NOV 2026 16:56
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.11.15)  15 NOV 2026 22:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**documentos/relatorios/relatorio-tecnico-video-review.tex
-(./documentos/relatorios/relatorio-tecnico-video-review.tex
+**relatorio-tecnico-pipelines.tex
+(./relatorio-tecnico-pipelines.tex
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -178,6 +178,34 @@ Package: longtable 2023-11-01 v4.19 Multi-page Table package (DPC)
 \c@LT@chunks=\count277
 \LT@p@ftn=\toks23
 )
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2022/03/10 v1.4e Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 107.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2022/09/22 v1.2b Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen165
+\Gin@req@width=\dimen166
+)
+(/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count278
+\float@exts=\toks24
+\float@box=\box57
+\@float@everytoks=\toks25
+\@floatcapt=\box58
+)
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2024-01-20 v7.01h Hypertext links for LaTeX
 
@@ -222,11 +250,11 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 (/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
-\c@section@level=\count278
+\c@section@level=\count279
 )
-\@linkdim=\dimen165
-\Hy@linkcounter=\count279
-\Hy@pagecounter=\count280
+\@linkdim=\dimen167
+\Hy@linkcounter=\count280
+\Hy@pagecounter=\count281
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
 File: pd1enc.def 2024-01-20 v7.01h Hyperref: PDFDocEncoding definition (HO)
@@ -236,7 +264,7 @@ Now handling font encoding PD1 ...
 (/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count281
+\Hy@SavedSpaceFactor=\count282
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def
 File: puenc.def 2024-01-20 v7.01h Hyperref: PDF Unicode definition (HO)
@@ -250,14 +278,14 @@ Package hyperref Info: Plain pages OFF on input line 4194.
 Package hyperref Info: Backreferencing OFF on input line 4199.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4446.
-\c@Hy@tempcnt=\count282
+\c@Hy@tempcnt=\count283
 
 (/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip16
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4784.
-\XeTeXLinkMargin=\dimen166
+\XeTeXLinkMargin=\dimen168
 
 (/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -266,9 +294,9 @@ Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count283
-\Field@Width=\dimen167
-\Fld@charsize=\dimen168
+\Fld@menulength=\count284
+\Field@Width=\dimen169
+\Fld@charsize=\dimen170
 Package hyperref Info: Hyper figures OFF on input line 6063.
 Package hyperref Info: Link nesting OFF on input line 6068.
 Package hyperref Info: Hyper index ON on input line 6071.
@@ -281,9 +309,9 @@ Package hyperref Info: PDF/A mode OFF on input line 6093.
 Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
 package with kernel methods
 )
-\Hy@abspage=\count284
-\c@Item=\count285
-\c@Hfootnote=\count286
+\Hy@abspage=\count285
+\c@Item=\count286
+\c@Hfootnote=\count287
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
@@ -295,8 +323,8 @@ Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend pac
 kage
 with kernel methods
 )
-\Fld@listcount=\count287
-\c@bookmark@seq@number=\count288
+\Fld@listcount=\count288
+\c@bookmark@seq@number=\count289
 
 (/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
 Package: rerunfilecheck 2022-07-10 v1.10 Rerun checks for auxiliary files (HO)
@@ -310,30 +338,37 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 \Hy@SectionHShift=\skip55
 )
 (/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
-\lst@mode=\count289
-\lst@gtempboxa=\box57
-\lst@token=\toks24
-\lst@length=\count290
-\lst@currlwidth=\dimen169
-\lst@column=\count291
-\lst@pos=\count292
-\lst@lostspace=\dimen170
-\lst@width=\dimen171
-\lst@newlines=\count293
-\lst@lineno=\count294
-\lst@maxwidth=\dimen172
+\lst@mode=\count290
+\lst@gtempboxa=\box59
+\lst@token=\toks26
+\lst@length=\count291
+\lst@currlwidth=\dimen171
+\lst@column=\count292
+\lst@pos=\count293
+\lst@lostspace=\dimen172
+\lst@width=\dimen173
+\lst@newlines=\count294
+\lst@lineno=\count295
+\lst@maxwidth=\dimen174
 
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2023/02/27 1.9 (Carsten Heinz)
-\c@lstnumber=\count295
-\lst@skipnumbers=\count296
-\lst@framebox=\box58
+\c@lstnumber=\count296
+\lst@skipnumbers=\count297
+\lst@framebox=\box60
 )
 (/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg
 File: listings.cfg 2023/02/27 1.9 listings configuration
 ))
 Package: listings 2023/02/27 1.9 (Carsten Heinz)
 
+(/usr/share/texlive/texmf-dist/tex/latex/listingsutf8/listingsutf8.sty
+Package: listingsutf8 2019-12-10 v1.5 Allow UTF-8 in listings input (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/stringenc/stringenc.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
+)
+))
 (/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
 Package: xcolor 2023/11/15 v3.01 LaTeX color extensions (UK)
 
@@ -342,9 +377,6 @@ File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package xcolor Info: Driver file: pdftex.def on input line 274.
 
-(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
-File: pdftex.def 2022/09/22 v1.2b Graphics/color driver for pdftex
-)
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/mathcolor.ltx)
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1350.
 Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1354.
@@ -356,7 +388,7 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1371.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1372.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1373.
 )
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 34
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 37
 .
 
 (/usr/share/texmf/tex/latex/lm/t1lmr.fd
@@ -364,30 +396,30 @@ File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count297
-\l__pdf_internal_box=\box59
+\l__color_backend_stack_int=\count298
+\l__pdf_internal_box=\box61
 )
-(documentos/relatorios/relatorio-tecnico-video-review.aux)
-\openout1 = `relatorio-tecnico-video-review.aux'.
+(./relatorio-tecnico-pipelines.aux)
+\openout1 = `relatorio-tecnico-pipelines.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -423,19 +455,19 @@ LaTeX Font Info:    ... okay on input line 34.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Info: Redefining \microtypecontext on input line 34.
-Package microtype Info: Applying patch `item' on input line 34.
-Package microtype Info: Applying patch `toc' on input line 34.
-Package microtype Info: Applying patch `eqnum' on input line 34.
-Package microtype Info: Applying patch `footnote' on input line 34.
-Package microtype Info: Applying patch `verbatim' on input line 34.
+LaTeX Info: Redefining \microtypecontext on input line 37.
+Package microtype Info: Applying patch `item' on input line 37.
+Package microtype Info: Applying patch `toc' on input line 37.
+Package microtype Info: Applying patch `eqnum' on input line 37.
+Package microtype Info: Applying patch `footnote' on input line 37.
+Package microtype Info: Applying patch `verbatim' on input line 37.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 34.
+LaTeX Info: Redefining \showhyphens on input line 37.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -443,60 +475,67 @@ Package microtype Info: No adjustment of character kerning.
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
 )
-Package hyperref Info: Link coloring OFF on input line 34.
-
-(documentos/relatorios/relatorio-tecnico-video-review.out)
-(documentos/relatorios/relatorio-tecnico-video-review.out)
-\@outlinefile=\write3
-\openout3 = `relatorio-tecnico-video-review.out'.
-
-\c@lstlisting=\count298
-
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count299
-\scratchdimen=\dimen173
-\scratchbox=\box60
+\scratchdimen=\dimen175
+\scratchbox=\box62
 \nofMPsegments=\count300
 \nofMParguments=\count301
-\everyMPshowfont=\toks25
+\everyMPshowfont=\toks27
 \MPscratchCnt=\count302
-\MPscratchDim=\dimen174
+\MPscratchDim=\dimen176
 \MPnumerator=\count303
 \makeMPintoPDFobject=\count304
-\everyMPtoPDFconversion=\toks26
-)
+\everyMPtoPDFconversion=\toks28
+) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+Package hyperref Info: Link coloring OFF on input line 37.
+
+(./relatorio-tecnico-pipelines.out) (./relatorio-tecnico-pipelines.out)
+\@outlinefile=\write3
+\openout3 = `relatorio-tecnico-pipelines.out'.
+
+\c@lstlisting=\count305
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 3
-6.
- (/usr/share/texmf/tex/latex/lm/ot1lmr.fd
+9.
+
+(/usr/share/texmf/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 3
-6.
+9.
 
 (/usr/share/texmf/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-36.
+39.
 
 (/usr/share/texmf/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-36.
+39.
 
 (/usr/share/texmf/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 36.
+(Font)              <14.4> on input line 39.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 36.
+(Font)              <10> on input line 39.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 36.
+(Font)              <7> on input line 39.
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 4
-5.
+8.
 
 (/usr/share/texmf/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
@@ -505,93 +544,121 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `lmtt' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-
-Overfull \hbox (15.33017pt too wide) in paragraph at lines 45--46
-\T1/lmr/m/n/12 (-20) com a pro-posta re-gis-trada em \T1/lmtt/m/n/12 documentos
-/requisitos/prototipo-revisao-cirurgica.md\T1/lmr/m/n/12 (-20) :
- []
-
-[1
+ [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/
 dvips/lm/lm-ec.enc}] [2]
-Overfull \hbox (36.90298pt too wide) in paragraph at lines 92--93
-\T1/lmr/m/n/12 (-20) caixa ini-cial, ras-tre-a-mento CSRT/KCF e gra-va-ção das 
-ima-gens e la-bels. \T1/lmtt/m/n/12 ultralytics_trainer.py
+Overfull \hbox (0.8243pt too wide) in paragraph at lines 109--110
+\T1/lmr/m/n/12 (-20) Os co-man-dos abaixo são exe-cu-ta-dos na raiz do re-po-si
+-tó-rio, após ins-ta-lar \T1/lmtt/m/n/12 requirements.txt\T1/lmr/m/n/12 (-20) ;
+
  []
 
-
-Overfull \hbox (40.89023pt too wide) in paragraph at lines 92--93
-\T1/lmr/m/n/12 (-20) chama o treino do Ul-traly-tics e re-torna o ca-mi-nho de 
-\T1/lmtt/m/n/12 best.pt\T1/lmr/m/n/12 (-20) . \T1/lmtt/m/n/12 ultralytics_video
-_predictor.py
- []
-
-
-Overfull \hbox (9.01193pt too wide) in paragraph at lines 108--108
-[]|\T1/lmtt/m/n/12 resources/cholec80/tracking/| 
- []
-
-
-Overfull \hbox (39.88695pt too wide) in paragraph at lines 109--109
-[]|\T1/lmtt/m/n/12 resources/datasets/cholec80-yolo/| 
- []
-
+[3] [4]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 126.
+(Font)              <12> on input line 148.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 126.
+(Font)              <8> on input line 148.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 126.
-[3] [4{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/en
-c/dvips/lm/lm-mathit.enc}]
-Overfull \hbox (58.62688pt too wide) in paragraph at lines 164--165
-[]\T1/lmr/m/n/12 (-20) Para ins-pe-ci-o-nar as op-ções dis-po-ní-veis, usar \T1
-/lmtt/m/n/12 PYTHONPATH=src python3 -m video_review.cli
- []
-
-
-Overfull \hbox (79.7017pt too wide) in paragraph at lines 168--169
-\T1/lmr/m/n/12 (-20) 640, batch 2 e va-li-da-ção ati-vada. O di-re-tó-rio in-di
--cado em \T1/lmtt/m/n/12 args.yaml \T1/lmr/m/n/12 (-20) é \T1/lmtt/m/n/12 runs/
-detect/cholec80-yolov8n-2\T1/lmr/m/n/12 (-20) .
- []
-
-[5]
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 2
-02.
+(Font)              <6> on input line 148.
+ [5]
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
+76.
  (/usr/share/texmf/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [6{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}] [7]
-(documentos/relatorios/relatorio-tecnico-video-review.aux)
+) [6{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}]
+Overfull \hbox (86.23975pt too wide) in paragraph at lines 197--198
+[]\T1/lmr/m/n/12 (-20) PROJETO. \T1/lmr/m/it/12 (-20) Ar-qui-te-tura dos pi-pe-
+li-nes\T1/lmr/m/n/12 (-20) . Do-cu-mento lo-cal: \T1/lmtt/m/n/12 documentos/arq
+uitetura/arquitetura.md\T1/lmr/m/n/12 (-20) . 
+ []
+
+[7]
+Overfull \hbox (62.42213pt too wide) in paragraph at lines 208--209
+\T1/lmr/m/n/12 (-20) Os grá-fi-cos a se-guir fo-ram ge-ra-dos pe-los ar-te-fa-t
+os do Ul-traly-tics em \T1/lmtt/m/n/12 runs/detect/cholec80-yolov8n-2\T1/lmr/m/
+n/12 (-20) .
+ []
+
+<../../runs/detect/cholec80-yolov8n-2/results.png, id=193, 867.24pt x 433.62pt>
+
+File: ../../runs/detect/cholec80-yolov8n-2/results.png Graphic file (type png)
+<use ../../runs/detect/cholec80-yolov8n-2/results.png>
+Package pdftex.def Info: ../../runs/detect/cholec80-yolov8n-2/results.png  used
+ on input line 212.
+(pdftex.def)             Requested size: 455.24411pt x 227.62082pt.
+<../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png, id=195, 650.43pt x 433.6
+2pt>
+File: ../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png Graphic file (type p
+ng)
+<use ../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png>
+Package pdftex.def Info: ../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png  
+used on input line 219.
+(pdftex.def)             Requested size: 418.82375pt x 279.2229pt.
+[8
+
+ <../../runs/detect/cholec80-yolov8n-2/results.png>]
+<../../runs/detect/cholec80-yolov8n-2/confusion_matrix.png, id=201, 867.24pt x 
+650.43pt>
+File: ../../runs/detect/cholec80-yolov8n-2/confusion_matrix.png Graphic file (t
+ype png)
+<use ../../runs/detect/cholec80-yolov8n-2/confusion_matrix.png>
+Package pdftex.def Info: ../../runs/detect/cholec80-yolov8n-2/confusion_matrix.
+png  used on input line 226.
+(pdftex.def)             Requested size: 373.3035pt x 279.97719pt.
+<video01-first-tool-frame-003375.jpg, id=202, 857.2025pt x 481.8pt>
+File: video01-first-tool-frame-003375.jpg Graphic file (type jpg)
+<use video01-first-tool-frame-003375.jpg>
+Package pdftex.def Info: video01-first-tool-frame-003375.jpg  used on input lin
+e 235.
+(pdftex.def)             Requested size: 257.16273pt x 144.5411pt.
+ [9 <../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png> <../../runs/detect/c
+holec80-yolov8n-2/confusion_matrix.png>]
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
+nput line 242.
+ (/usr/share/texlive/texmf-dist/tex/latex/base/latin1.def
+File: latin1.def 2021/02/14 v1.3d Input encoding file
+)
+(/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-utf8.def
+File: se-utf8.def 2019/11/29 v1.12 stringenc: UTF-8
+)
+(/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-iso-8859-1.def
+File: se-iso-8859-1.def 2019/11/29 v1.12 stringenc: ISO-8859-1
+)
+[10 <./video01-first-tool-frame-003375.jpg>]
+(/usr/share/texlive/texmf-dist/tex/latex/base/latin1.def
+File: latin1.def 2021/02/14 v1.3d Input encoding file
+) [11]
+(/usr/share/texlive/texmf-dist/tex/latex/base/latin1.def
+File: latin1.def 2021/02/14 v1.3d Input encoding file
+) [12] [13]
+(./relatorio-tecnico-pipelines.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
-Package rerunfilecheck Info: File `relatorio-tecnico-video-review.out' has not 
-changed.
-(rerunfilecheck)             Checksum: 8E37B766D3C08763B8F1FE037B52BFE8;3089.
+Package rerunfilecheck Info: File `relatorio-tecnico-pipelines.out' has not cha
+nged.
+(rerunfilecheck)             Checksum: FDE08EBFF867198836A412D63735AB38;3993.
  ) 
 Here is how much of TeX's memory you used:
- 14271 strings out of 476162
- 223521 string characters out of 5794814
- 2020975 words of memory out of 5000000
- 35906 multiletter control sequences out of 15000+600000
- 627548 words of font info for 148 fonts, out of 8000000 for 9000
+ 15116 strings out of 476162
+ 239090 string characters out of 5794813
+ 2347975 words of memory out of 5000000
+ 36576 multiletter control sequences out of 15000+600000
+ 627812 words of font info for 150 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
- 75i,8n,79p,1170b,1123s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,8n,79p,1188b,2482s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/ty
-pe1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi12.pfb></u
-sr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/pu
-blic/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.pfb></usr/share/
-texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/
-lmri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf
-/fonts/type1/public/lm/lmtt12.pfb>
-Output written on documentos/relatorios/relatorio-tecnico-video-review.pdf (7 p
-ages, 254643 bytes).
+pe1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></us
+r/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/pub
+lic/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/shar
+e/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/l
+m/lmtt12.pfb>
+Output written on relatorio-tecnico-pipelines.pdf (13 pages, 839015 bytes).
 PDF statistics:
- 229 PDF objects out of 1000 (max. 8388607)
- 196 compressed objects within 2 object streams
- 66 named destinations out of 1000 (max. 500000)
- 40081 words of extra memory for PDF output out of 42996 (max. 10000000)
+ 420 PDF objects out of 1000 (max. 8388607)
+ 376 compressed objects within 4 object streams
+ 196 named destinations out of 1000 (max. 500000)
+ 40125 words of extra memory for PDF output out of 42996 (max. 10000000)
 

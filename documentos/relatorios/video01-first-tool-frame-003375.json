@@ -1,0 +1,39 @@
+{
+  "video": "/home/jefferson/workspace/tech-challenge-fase-4/resources/cholec80/videos/video01.mp4",
+  "frame": 3375,
+  "timestamp_seconds": 135.0,
+  "confirmation_frame": 3377,
+  "confirmation_timestamp_seconds": 135.08,
+  "analysis_interval_seconds": {
+    "start": 135.0,
+    "end": 200.0
+  },
+  "detector": {
+    "weights": "/home/jefferson/workspace/tech-challenge-fase-4/runs/detect/cholec80-yolov8n-2/weights/best.pt",
+    "confidence_threshold": 0.25,
+    "confirmation_consecutive_frames": 3,
+    "device": null
+  },
+  "detections": [
+    {
+      "class_id": 2,
+      "class_name": "hook",
+      "confidence": 0.925543,
+      "box_xyxy": [
+        412.93,
+        156.52,
+        680.7,
+        438.37
+      ],
+      "consecutive_frames": 3,
+      "source": "YOLO prediction; not independently verified"
+    }
+  ],
+  "vision_analysis": {
+    "provider": "OpenAI",
+    "model": "gpt-4o",
+    "frame_sent_externally": true,
+    "description": "No frame de vídeo cirúrgico, é visível:\n\n- Um instrumento cirúrgico de ponta metálica, possivelmente um gancho, em contato com o tecido.\n- Estruturas de tecido de cor marrom-avermelhada e amarelada, com áreas de brilho que podem indicar umidade ou reflexo de luz.\n- Pequenas áreas de coloração vermelha, que podem sugerir presença de sangue.\n- A imagem parece ser capturada por um endoscópio, dada a perspectiva e iluminação.\n\nEssas observações são baseadas apenas nos elementos visíveis na imagem."
+  },
+  "limitations": "Relatório técnico experimental para revisão humana; não constitui confirmação da detecção, diagnóstico ou orientação clínica."
+}

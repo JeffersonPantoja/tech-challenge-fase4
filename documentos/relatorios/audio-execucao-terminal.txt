@@ -1,0 +1,36 @@
+(.venv) jefferson@UbuntuDesktop:~/workspace/tech-challenge-fase-4$ PYTHONPATH=src .venv/bin/python -m therapy_audio.cli \
+  resources/datasets/sessao-terapia.mp4 \
+  --start-seconds 500 \
+  --duration-seconds 30 \
+  --openai-analysis
+Aviso: o áudio será enviado ao reconhecimento de fala Google e o texto à AWS Comprehend e à OpenAI para análise complementar.
+2026-11-15 22:29:43,976 INFO therapy_audio.infrastructure.google_speech_transcriber: Áudio de 30.0s dividido em 1 trechos de até 45.0s usando pausas (limiar -35.0 dBFS, silêncio mínimo 350ms).
+2026-11-15 22:29:43,977 INFO therapy_audio.infrastructure.google_speech_transcriber: Transcrevendo trecho 1/1: 0.00s–30.00s (30.00s), idioma=pt-BR
+2026-11-15 22:29:49,195 INFO botocore.credentials: Found credentials in shared credentials file: ~/.aws/credentials
+2026-11-15 22:29:55,968 INFO httpx: HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+
+=== Análise de sentimento por parte ===
+
+Parte 1 (0.00s–30.00s)
+Transcrição: mas a verdade é que eu me incomodo muito por que você se incomoda eu não talvez porque eu não faça nada para merecer essas esses insultos Hum nada eu tenho uma vida muito regrada mas então se você não me ajuda a entender isso por favor se houver
+Sentimento: NEGATIVE
+Pontuações:
+  Positive: 0.0002
+  Negative: 0.9902
+  Neutral: 0.0096
+  Mixed: 0.0000
+Análise complementar GPT:
+  Interpretação AWS: NEGATIVE
+  Resumo das pontuações AWS: O AWS Comprehend classificou o trecho como NEGATIVE, com pontuação muito alta para Negative (0.9902) e valores muito baixos para Positive, Neutral e Mixed. A distribuição sugere predominância clara de conteúdo de desconforto, queixa e tensão no próprio trecho.
+  Sentimento complementar: NEGATIVE
+  Contexto: A leitura complementar também é NEGATIVE porque o trecho traz incômodo, referência a insultos e frustração com a falta de ajuda para entender a situação. Não há elementos suficientes para sustentar um tom positivo ou neutro predominante. Ainda assim, a fala não descreve diretamente um evento completo; ela é fragmentária e mistura autojustificação, pedido de ajuda e queixa, o que explica a alta concordância com a classe negativa sem exigir interpretação clínica.
+  Termos críticos:
+    eu me incomodo muito (desconforto): "eu me incomodo muito" — Expressa incômodo explícito, compatível com a polaridade negativa do trecho.
+    você se incomoda (tensão interpessoal): "por que você se incomoda" — Indica uma referência a incômodo na relação ou interação, contribuindo para o tom negativo.
+    insultos (agressão verbal): "esses insultos" — Menção literal a insultos, associada a conteúdo negativo no trecho.
+    não faço nada para merecer (injustiça/negação): "eu não faça nada para merecer" — Sugere defesa contra uma acusação ou tratamento percebido como indevido, reforçando a negatividade.
+    não me ajuda a entender isso (pedido de ajuda/frustração): "você não me ajuda a entender isso" — Mostra frustração e falta de esclarecimento na interação, sem extrapolar para além do texto.
+  Limitações: O trecho é curto, fragmentado e sem contexto anterior ou posterior, então a interpretação se limita ao conteúdo literal apresentado. Não é possível inferir diagnóstico, intenção, relação entre falantes ou a causa dos insultos. A análise apenas descreve polaridade textual e não avalia estado psicológico.
+Áudio extraído: /home/jefferson/workspace/tech-challenge-fase-4/resources/therapy-audio/sessao-terapia-016.wav
+Transcrição salva em: /home/jefferson/workspace/tech-challenge-fase-4/resources/therapy-audio/sessao-terapia-016-transcricao.txt
+Interprete a classificação como polaridade textual, não como avaliação clínica.
