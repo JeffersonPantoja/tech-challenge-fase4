@@ -59,6 +59,12 @@ O pacote \texttt{src/video\_review/} oferece rastreamento interativo de uma ferr
 
 O pacote \texttt{src/therapy\_audio/} recebe um caminho local de vídeo, extrai o intervalo solicitado, segmenta áudio próximo a pausas, transcreve em \texttt{pt-BR} e classifica cada segmento com AWS Comprehend (idioma \texttt{pt}). A análise contextual OpenAI é opcional e opera por segmento usando a transcrição e a resposta AWS como contexto. Esse pipeline aceita outros vídeos locais compatíveis; não é restrito ao vídeo de demonstração de sessão de terapia.
 
+\subsection{Fontes dos vídeos e do dataset}
+
+O pipeline visual usa o Cholec80, dataset de pesquisa composto por 80 vídeos de colecistectomias laparoscópicas realizadas por 13 cirurgiões. Os vídeos são registrados a 25 quadros por segundo; as anotações de fase cirúrgica acompanham os quadros, enquanto as anotações binárias de presença de instrumentos são fornecidas a 1 quadro por segundo. Essas anotações de presença não são caixas delimitadoras e, portanto, não substituem as caixas revisadas manualmente usadas neste projeto. A página da CAMMA informa a licença CC BY-NC-SA 4.0 e as condições de acesso e citação; consulte a fonte antes de redistribuir ou reutilizar os dados. O vídeo usado como exemplo é \texttt{video01.mp4}, dentro de \texttt{resources/cholec80/videos/}.
+
+O vídeo usado na demonstração de áudio é \texttt{resources/datasets/sessao-terapia.mp4}. Conforme os requisitos do projeto, trata-se do vídeo público \textit{Paulo Knapp Demonstra uma Sessão de Terapia Cognitivo Comportamental - TCC}, publicado pelo canal Centro de Mindfulness. A descrição da publicação informa que foi filmado no Congresso CCE de 2010. Essa identificação caracteriza o material como demonstração publicada; não há base para descrevê-lo como gravação de atendimento clínico real. A licença e a autorização para baixar, processar ou redistribuir o vídeo devem ser verificadas separadamente.
+
 \section{Arquitetura}
 
 Os dois pacotes seguem uma organização inspirada em Clean Architecture, sem uma camada de domínio separada. A CLI trata argumentos e apresentação, a camada \texttt{application} coordena casos de uso e a camada \texttt{infrastructure} encapsula bibliotecas e serviços externos. Protocolos e modelos de dados são usados quando ajudam a separar dependências e testar os fluxos.
@@ -162,13 +168,13 @@ As figuras anexadas ao final do relatório complementam estes resultados: a Figu
 
 \subsection{Áudio}
 
-Foi executada uma demonstração sobre o intervalo de 30 segundos iniciado em 500 s de \texttt{sessao-terapia.mp4}, com análise OpenAI habilitada. O áudio formou um único segmento (0--30 s), transcrito em \texttt{pt-BR}; a chamada à API da OpenAI retornou HTTP 200. A saída completa do terminal está reproduzida no Anexo~\ref{sec:execucao-audio}.
+Foi executada uma demonstração sobre o intervalo de 30 segundos iniciado em 500 s de \texttt{resources/datasets/sessao-terapia.mp4}, com análise OpenAI habilitada. O áudio formou um único segmento (0--30 s), transcrito em \texttt{pt-BR}; a chamada à API da OpenAI retornou HTTP 200. A saída completa do terminal está reproduzida no Anexo~\ref{sec:execucao-audio}.
 
 O AWS Comprehend classificou o segmento como \texttt{NEGATIVE}: negativa 0,9902; neutra 0,0096; positiva 0,0002; mista 0,0000. A análise OpenAI também indicou polaridade negativa, citando desconforto, tensão relacional, insultos e pedido de ajuda, com ressalva de que havia busca por esclarecimento. São interpretações do texto transcrito, não categorias clínicas.
 
 As saídas não permitem inferir diagnóstico, causa do conflito ou estado emocional estável; a polaridade AWS não mede intensidade emocional. Não houve comparação da transcrição com revisão humana.
 
-O WAV e a transcrição com intervalos foram salvos em \texttt{resources/therapy-audio/} com sufixo \texttt{-015}; as análises foram exibidas no terminal. Esta execução é demonstrativa e não mede acurácia, eficácia clínica ou generalização.
+O WAV e a transcrição com intervalos foram salvos em \texttt{resources/therapy-audio/} com sufixo \texttt{-016}; as análises foram exibidas no terminal. Esta execução é demonstrativa e não mede acurácia, eficácia clínica ou generalização.
 
 \section{Limitações, privacidade e validade}
 
@@ -194,6 +200,8 @@ O projeto reúne duas aplicações locais com arquitetura modular semelhante, ma
   \item OPENCV. \textit{OpenCV Documentation}. Disponível em: \url{https://docs.opencv.org/}. Acesso em: \today.
   \item AMAZON WEB SERVICES. \textit{Amazon Comprehend API Reference: DetectSentiment}. Disponível em: \url{https://docs.aws.amazon.com/comprehend/}.
   \item OPENAI. \textit{API Documentation}. Disponível em: \url{https://platform.openai.com/docs/}.
+  \item CAMMA. \textit{Cholec80 Dataset}. Disponível em: \url{https://camma.unistra.fr/datasets/}. Acesso em: \today.
+  \item CENTRO DE MINDFULNESS. \textit{Paulo Knapp Demonstra uma Sessão de Terapia Cognitivo Comportamental - TCC}. YouTube. Disponível em: \url{https://www.youtube.com/watch?v=VS6YMAjdGZA}. Acesso em: \today.
   \item PROJETO. \textit{Arquitetura dos pipelines}. Documento local: \texttt{documentos/arquitetura/arquitetura.md}.
   \item PROJETO. \textit{Protótipo acadêmico de apoio à revisão cirúrgica}. Requisitos locais: \texttt{documentos/requisitos/prototipo-revisao-cirurgica.md}.
   \item PROJETO. \textit{Pipeline de áudio e análise de sentimento de sessão de terapia}. Requisitos locais: \texttt{documentos/requisitos/pipeline-audio-sessao-terapia.md}.
