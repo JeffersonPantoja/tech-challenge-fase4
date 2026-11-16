@@ -7,6 +7,8 @@ Este repositório reúne **dois pipelines independentes**, com entradas, depend�
 
 O segundo pipeline pode processar o áudio do vídeo de uma sessão de terapia mencionado no contexto acadêmico do projeto, mas aceita outros vídeos locais compatíveis; não depende do pipeline visual. Ambos são experimentais: não confirmam anomalias clínicas, não diagnosticam e não devem orientar procedimentos ou decisões clínicas. Confira autorização e privacidade antes de enviar vídeos, áudios, frames ou transcrições a serviços externos.
 
+Para detalhes sobre arquitetura, métodos, resultados, limitações e fontes dos dados, consulte o [relatório técnico dos pipelines](documentos/relatorios/relatorio-tecnico-pipelines.pdf).
+
 ## Visão geral das ferramentas
 
 | Ferramenta | Código | Funções principais | Seções deste README |
