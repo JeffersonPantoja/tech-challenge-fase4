@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.11.15)  15 NOV 2026 22:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.11.15)  16 NOV 2026 00:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -388,7 +388,19 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1371.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1372.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1373.
 )
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 37
+(/usr/share/texlive/texmf-dist/tex/generic/ulem/ulem.sty
+\UL@box=\box61
+\UL@hyphenbox=\box62
+\UL@skip=\skip56
+\UL@hook=\toks27
+\UL@height=\dimen175
+\UL@pe=\count298
+\UL@pixel=\dimen176
+\ULC@box=\box63
+Package: ulem 2019/11/18
+\ULdepth=\dimen177
+)
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 38
 .
 
 (/usr/share/texmf/tex/latex/lm/t1lmr.fd
@@ -396,30 +408,30 @@ File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count298
-\l__pdf_internal_box=\box61
+\l__color_backend_stack_int=\count299
+\l__pdf_internal_box=\box64
 )
 (./relatorio-tecnico-pipelines.aux)
 \openout1 = `relatorio-tecnico-pipelines.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -455,19 +467,19 @@ LaTeX Font Info:    ... okay on input line 37.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Info: Redefining \microtypecontext on input line 37.
-Package microtype Info: Applying patch `item' on input line 37.
-Package microtype Info: Applying patch `toc' on input line 37.
-Package microtype Info: Applying patch `eqnum' on input line 37.
-Package microtype Info: Applying patch `footnote' on input line 37.
-Package microtype Info: Applying patch `verbatim' on input line 37.
+LaTeX Info: Redefining \microtypecontext on input line 38.
+Package microtype Info: Applying patch `item' on input line 38.
+Package microtype Info: Applying patch `toc' on input line 38.
+Package microtype Info: Applying patch `eqnum' on input line 38.
+Package microtype Info: Applying patch `footnote' on input line 38.
+Package microtype Info: Applying patch `verbatim' on input line 38.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 37.
+LaTeX Info: Redefining \showhyphens on input line 38.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -477,65 +489,73 @@ File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman
 )
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count299
-\scratchdimen=\dimen175
-\scratchbox=\box62
-\nofMPsegments=\count300
-\nofMParguments=\count301
-\everyMPshowfont=\toks27
-\MPscratchCnt=\count302
-\MPscratchDim=\dimen176
-\MPnumerator=\count303
-\makeMPintoPDFobject=\count304
-\everyMPtoPDFconversion=\toks28
+\scratchcounter=\count300
+\scratchdimen=\dimen178
+\scratchbox=\box65
+\nofMPsegments=\count301
+\nofMParguments=\count302
+\everyMPshowfont=\toks28
+\MPscratchCnt=\count303
+\MPscratchDim=\dimen179
+\MPnumerator=\count304
+\makeMPintoPDFobject=\count305
+\everyMPtoPDFconversion=\toks29
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+
+(/usr/share/texlive/texmf-dist/tex/latex/grfext/grfext.sty
+Package: grfext 2019/12/03 v1.3 Manage graphics extensions (HO)
+)
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 85.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 504.
 
 (/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring OFF on input line 37.
+Package hyperref Info: Link coloring OFF on input line 38.
 
 (./relatorio-tecnico-pipelines.out) (./relatorio-tecnico-pipelines.out)
 \@outlinefile=\write3
 \openout3 = `relatorio-tecnico-pipelines.out'.
 
-\c@lstlisting=\count305
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 3
-9.
+\c@lstlisting=\count306
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 4
+0.
 
 (/usr/share/texmf/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 3
-9.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 4
+0.
 
 (/usr/share/texmf/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-39.
+40.
 
 (/usr/share/texmf/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-39.
+40.
 
 (/usr/share/texmf/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 39.
+(Font)              <14.4> on input line 40.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 39.
+(Font)              <10> on input line 40.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 39.
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 4
-8.
+(Font)              <7> on input line 40.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 5
+1.
 
 (/usr/share/texmf/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
@@ -548,13 +568,13 @@ Package microtype Info: Loading generic protrusion settings for font family
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/
 dvips/lm/lm-ec.enc}]
-Overfull \hbox (20.41008pt too wide) in paragraph at lines 66--67
+Overfull \hbox (20.41008pt too wide) in paragraph at lines 69--70
 []\T1/lmr/m/n/12 (-20) O ví-deo usado na de-mons-tra-ção de áu-dio é \T1/lmtt/m
 /n/12 resources/datasets/sessao-terapia.mp4\T1/lmr/m/n/12 (-20) .
  []
 
 [2] [3]
-Overfull \hbox (0.8243pt too wide) in paragraph at lines 115--116
+Overfull \hbox (0.8243pt too wide) in paragraph at lines 118--119
 \T1/lmr/m/n/12 (-20) Os co-man-dos abaixo são exe-cu-ta-dos na raiz do re-po-si
 -tó-rio, após ins-ta-lar \T1/lmtt/m/n/12 requirements.txt\T1/lmr/m/n/12 (-20) ;
 
@@ -562,73 +582,73 @@ Overfull \hbox (0.8243pt too wide) in paragraph at lines 115--116
 
 [4]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 154.
+(Font)              <12> on input line 157.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 154.
+(Font)              <8> on input line 157.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 154.
+(Font)              <6> on input line 157.
  [5]
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
-82.
+85.
  (/usr/share/texmf/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [6{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}]
-Overfull \hbox (9.01126pt too wide) in paragraph at lines 203--204
+Overfull \hbox (9.01126pt too wide) in paragraph at lines 206--207
 []\T1/lmr/m/n/12 (-20) CAMMA. \T1/lmr/m/it/12 (-20) Cho-lec80 Da-ta-set\T1/lmr/
 m/n/12 (-20) . Dis-po-ní-vel em: []$\T1/lmtt/m/n/12 https : / / camma . unistra
  . fr / datasets/$[]\T1/lmr/m/n/12 (-20) .
  []
 
 
-Overfull \hbox (86.23975pt too wide) in paragraph at lines 205--206
+Overfull \hbox (86.23975pt too wide) in paragraph at lines 209--210
 []\T1/lmr/m/n/12 (-20) PROJETO. \T1/lmr/m/it/12 (-20) Ar-qui-te-tura dos pi-pe-
 li-nes\T1/lmr/m/n/12 (-20) . Do-cu-mento lo-cal: \T1/lmtt/m/n/12 documentos/arq
 uitetura/arquitetura.md\T1/lmr/m/n/12 (-20) . 
  []
 
 [7]
-Overfull \hbox (62.42213pt too wide) in paragraph at lines 216--217
+Overfull \hbox (62.42213pt too wide) in paragraph at lines 220--221
 \T1/lmr/m/n/12 (-20) Os grá-fi-cos a se-guir fo-ram ge-ra-dos pe-los ar-te-fa-t
 os do Ul-traly-tics em \T1/lmtt/m/n/12 runs/detect/cholec80-yolov8n-2\T1/lmr/m/
 n/12 (-20) .
  []
 
-<../../runs/detect/cholec80-yolov8n-2/results.png, id=202, 867.24pt x 433.62pt>
+<../../runs/detect/cholec80-yolov8n-2/results.png, id=206, 867.24pt x 433.62pt>
 
 File: ../../runs/detect/cholec80-yolov8n-2/results.png Graphic file (type png)
 <use ../../runs/detect/cholec80-yolov8n-2/results.png>
 Package pdftex.def Info: ../../runs/detect/cholec80-yolov8n-2/results.png  used
- on input line 220.
+ on input line 224.
 (pdftex.def)             Requested size: 455.24411pt x 227.62082pt.
-<../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png, id=204, 650.43pt x 433.6
+<../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png, id=208, 650.43pt x 433.6
 2pt>
 File: ../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png Graphic file (type p
 ng)
 <use ../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png>
 Package pdftex.def Info: ../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png  
-used on input line 227.
+used on input line 231.
 (pdftex.def)             Requested size: 418.82375pt x 279.2229pt.
 [8
 
  <../../runs/detect/cholec80-yolov8n-2/results.png>]
-<../../runs/detect/cholec80-yolov8n-2/confusion_matrix.png, id=210, 867.24pt x 
+<../../runs/detect/cholec80-yolov8n-2/confusion_matrix.png, id=214, 867.24pt x 
 650.43pt>
 File: ../../runs/detect/cholec80-yolov8n-2/confusion_matrix.png Graphic file (t
 ype png)
 <use ../../runs/detect/cholec80-yolov8n-2/confusion_matrix.png>
 Package pdftex.def Info: ../../runs/detect/cholec80-yolov8n-2/confusion_matrix.
-png  used on input line 234.
+png  used on input line 238.
 (pdftex.def)             Requested size: 373.3035pt x 279.97719pt.
-<video01-first-tool-frame-003375.jpg, id=211, 857.2025pt x 481.8pt>
+<video01-first-tool-frame-003375.jpg, id=215, 857.2025pt x 481.8pt>
 File: video01-first-tool-frame-003375.jpg Graphic file (type jpg)
 <use video01-first-tool-frame-003375.jpg>
 Package pdftex.def Info: video01-first-tool-frame-003375.jpg  used on input lin
-e 243.
+e 247.
 (pdftex.def)             Requested size: 257.16273pt x 144.5411pt.
  [9 <../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png> <../../runs/detect/c
 holec80-yolov8n-2/confusion_matrix.png>]
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 250.
+nput line 254.
  (/usr/share/texlive/texmf-dist/tex/latex/base/latin1.def
 File: latin1.def 2021/02/14 v1.3d Input encoding file
 )
@@ -655,11 +675,11 @@ nged.
 (rerunfilecheck)             Checksum: 982C30F16A9677063447AADD6EA65267;4219.
  ) 
 Here is how much of TeX's memory you used:
- 15124 strings out of 476162
- 239177 string characters out of 5794813
+ 15254 strings out of 476162
+ 241208 string characters out of 5794813
  2347975 words of memory out of 5000000
- 36577 multiletter control sequences out of 15000+600000
- 628032 words of font info for 152 fonts, out of 8000000 for 9000
+ 36697 multiletter control sequences out of 15000+600000
+ 628138 words of font info for 153 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
  75i,8n,79p,1188b,2482s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/ty
@@ -668,10 +688,10 @@ r/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/pub
 lic/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/shar
 e/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/l
 m/lmtt12.pfb>
-Output written on relatorio-tecnico-pipelines.pdf (13 pages, 842119 bytes).
+Output written on relatorio-tecnico-pipelines.pdf (13 pages, 843456 bytes).
 PDF statistics:
- 430 PDF objects out of 1000 (max. 8388607)
- 386 compressed objects within 4 object streams
- 199 named destinations out of 1000 (max. 500000)
+ 434 PDF objects out of 1000 (max. 8388607)
+ 390 compressed objects within 4 object streams
+ 200 named destinations out of 1000 (max. 500000)
  40133 words of extra memory for PDF output out of 42996 (max. 10000000)
 

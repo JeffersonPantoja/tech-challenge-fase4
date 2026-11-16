@@ -14,6 +14,7 @@
 \usepackage{listings}
 \usepackage{listingsutf8}
 \usepackage{xcolor}
+\usepackage[normalem]{ulem}
 
 \geometry{margin=2.5cm}
 \setlength{\parskip}{0.45em}
@@ -31,11 +32,13 @@
 
 \title{\textbf{Relatório técnico dos pipelines de análise de vídeo e áudio}\\
 \large Arquitetura, implementação, resultados e limitações}
-\author{Projeto acadêmico -- Tech Challenge Fase 4}
+\author{Jefferson Antônio Pantoja Silva\\Projeto acadêmico -- Tech Challenge Fase 4}
 \date{\today}
 
 \begin{document}
 \maketitle
+
+\noindent\textbf{Repositório do projeto:} \href{https://github.com/JeffersonPantoja/tech-challenge-fase4}{\textcolor{blue}{\uline{https://github.com/JeffersonPantoja/tech-challenge-fase4}}}
 
 \begin{abstract}
 Este relatório apresenta a arquitetura e o estado implementado de dois pipelines independentes em Python. O pipeline \textit{video-review} realiza rastreamento manual de instrumentos em vídeos cirúrgicos, prepara anotações YOLO, treina um detector e executa inferência e geração opcional de relatório. O pipeline \textit{therapy-audio} extrai áudio de um vídeo local, transcreve segmentos em português brasileiro, classifica a polaridade textual com AWS Comprehend e, mediante opção explícita, solicita análise contextual estruturada à OpenAI. Ambos usam interfaces de linha de comando e separam casos de uso de adaptadores de infraestrutura. Os artefatos visuais disponíveis incluem métricas de validação, mas a divisão aleatória por imagem não demonstra generalização para procedimentos independentes. Para o pipeline de áudio, os resultados registrados são demonstrativos e não constituem avaliação quantitativa da qualidade da transcrição ou análise. Os sistemas são protótipos acadêmicos de apoio à revisão humana, sem validade diagnóstica ou finalidade clínica.
@@ -202,6 +205,7 @@ O projeto reúne duas aplicações locais com arquitetura modular semelhante, ma
   \item OPENAI. \textit{API Documentation}. Disponível em: \url{https://platform.openai.com/docs/}.
   \item CAMMA. \textit{Cholec80 Dataset}. Disponível em: \url{https://camma.unistra.fr/datasets/}. Acesso em: \today.
   \item CENTRO DE MINDFULNESS. \textit{Paulo Knapp Demonstra uma Sessão de Terapia Cognitivo Comportamental - TCC}. YouTube. Disponível em: \url{https://www.youtube.com/watch?v=VS6YMAjdGZA}. Acesso em: \today.
+  \item PROJETO. \textit{Repositório Tech Challenge Fase 4}. Disponível em: \url{https://github.com/JeffersonPantoja/tech-challenge-fase4}. Acesso em: \today.
   \item PROJETO. \textit{Arquitetura dos pipelines}. Documento local: \texttt{documentos/arquitetura/arquitetura.md}.
   \item PROJETO. \textit{Protótipo acadêmico de apoio à revisão cirúrgica}. Requisitos locais: \texttt{documentos/requisitos/prototipo-revisao-cirurgica.md}.
   \item PROJETO. \textit{Pipeline de áudio e análise de sentimento de sessão de terapia}. Requisitos locais: \texttt{documentos/requisitos/pipeline-audio-sessao-terapia.md}.
