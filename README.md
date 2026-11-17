@@ -154,6 +154,28 @@ python -m pip install -r requirements.txt
 
 Os comandos dos dois pipelines assumem execução na raiz do repositório e usam `PYTHONPATH=src`.
 
+## Solução de problemas
+
+### CSRT/KCF não disponível no OpenCV
+
+Se o rastreamento falhar por ausência de `TrackerCSRT_create` ou `TrackerKCF_create`, verifique se a `.venv` tem versões conflitantes de `opencv-python` e `opencv-contrib-python`. Ambos instalam o módulo `cv2`; se estiverem em versões diferentes, o `cv2` carregado pode não incluir os trackers de contrib.
+
+No ambiente em que o problema foi reproduzido, funcionou manter os dois pacotes na mesma versão (`4.14.0.94`) e reinstalar `opencv-contrib-python` por último:
+
+```bash
+.venv/bin/python -m pip install --force-reinstall opencv-python==4.14.0.94 opencv-contrib-python==4.14.0.94
+.venv/bin/python -m pip install --force-reinstall --no-deps opencv-contrib-python==4.14.0.94
+```
+
+Valide a consistência e a presença do tracker CSRT:
+
+```bash
+.venv/bin/python -m pip check
+.venv/bin/python -c "import cv2; print(cv2.__version__); print(hasattr(cv2, 'legacy') and hasattr(cv2.legacy, 'TrackerCSRT_create'))"
+```
+
+O segundo comando deve mostrar a versão do OpenCV e `True`. Esta é a configuração verificada para o ambiente descrito; se estiver usando outra versão, mantenha os dois pacotes alinhados e confirme a API disponível.
+
 ## Rastrear uma ferramenta
 
 O comando abre o vídeo e permite selecionar manualmente a caixa inicial. A saída é organizada sob a pasta da classe e da execução:
