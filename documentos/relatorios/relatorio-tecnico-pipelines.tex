@@ -40,6 +40,8 @@
 
 \noindent\textbf{Repositório do projeto:} \href{https://github.com/JeffersonPantoja/tech-challenge-fase4}{\textcolor{blue}{\uline{https://github.com/JeffersonPantoja/tech-challenge-fase4}}}
 
+\noindent\textbf{Vídeo da apresentação:} \href{https://youtu.be/cveVCD0DPWc}{\textcolor{blue}{\uline{https://youtu.be/cveVCD0DPWc}}}
+
 \begin{abstract}
 Este relatório apresenta a arquitetura e o estado implementado de dois pipelines independentes em Python. O pipeline \textit{video-review} realiza rastreamento manual de instrumentos em vídeos cirúrgicos, prepara anotações YOLO, treina um detector e executa inferência e geração opcional de relatório. O pipeline \textit{therapy-audio} extrai áudio de um vídeo local, transcreve segmentos em português brasileiro, classifica a polaridade textual com AWS Comprehend e, mediante opção explícita, solicita análise contextual estruturada à OpenAI. Ambos usam interfaces de linha de comando e separam casos de uso de adaptadores de infraestrutura. Os artefatos visuais disponíveis incluem métricas de validação, mas a divisão aleatória por imagem não demonstra generalização para procedimentos independentes. Para o pipeline de áudio, os resultados registrados são demonstrativos e não constituem avaliação quantitativa da qualidade da transcrição ou análise. Os sistemas são protótipos acadêmicos de apoio à revisão humana, sem validade diagnóstica ou finalidade clínica.
 \end{abstract}
@@ -132,12 +134,16 @@ PYTHONPATH=src python3 -m video_review.cli detector train \\
 PYTHONPATH=src python3 -m video_review.cli detector predict \\
   --video resources/cholec80/videos/video01.mp4 \\
   --weights runs/detect/cholec80-yolov8n/weights/best.pt
+PYTHONPATH=src python3 -m video_review.cli detector first-tool-report \\
+  --video resources/cholec80/videos/video01.mp4 \\
+  --weights runs/detect/cholec80-yolov8n/weights/best.pt \\
+  --start-seconds 135 --end-seconds 200 --send-frame-to-openai
 
 PYTHONPATH=src python3 -m therapy_audio.cli \\
   resources/cholec80/videos/video01.mp4 --test-seconds 60
 \end{lstlisting}
 
-O rastreamento requer interface gráfica para selecionar a região inicial. Vídeos, pesos e credenciais AWS/OpenAI não são garantidos no repositório. Para habilitar análise contextual de áudio, configurar \texttt{OPENAI\_API\_KEY} no ambiente e acrescentar \texttt{--openai-analysis}; para descrição visual, usar \texttt{--send-frame-to-openai}. A lista completa de opções e exemplos de cada comando está no \texttt{README.md} da raiz do repositório.
+O comando \texttt{detector first-tool-report} gera o frame, o relatório Markdown e os metadados JSON da primeira detecção estável no intervalo. A opção \texttt{--send-frame-to-openai} envia o frame selecionado à OpenAI para análise visual (GPT-4o nesta execução); sem ela, o relatório é produzido localmente. Vídeos, pesos e credenciais AWS/OpenAI não são garantidos no repositório. Para habilitar análise contextual de áudio, configurar \texttt{OPENAI\_API\_KEY} no ambiente e acrescentar \texttt{--openai-analysis}. A lista completa de opções e exemplos de cada comando está no \texttt{README.md} da raiz do repositório.
 
 \section{Resultados experimentais disponíveis}
 

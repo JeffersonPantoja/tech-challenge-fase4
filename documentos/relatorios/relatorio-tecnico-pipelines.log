@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.11.15)  16 NOV 2026 00:27
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.11.15)  17 NOV 2026 00:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -555,7 +555,7 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <7> on input line 40.
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 5
-1.
+3.
 
 (/usr/share/texmf/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
@@ -568,87 +568,92 @@ Package microtype Info: Loading generic protrusion settings for font family
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/
 dvips/lm/lm-ec.enc}]
-Overfull \hbox (20.41008pt too wide) in paragraph at lines 69--70
+Overfull \hbox (20.41008pt too wide) in paragraph at lines 71--72
 []\T1/lmr/m/n/12 (-20) O ví-deo usado na de-mons-tra-ção de áu-dio é \T1/lmtt/m
 /n/12 resources/datasets/sessao-terapia.mp4\T1/lmr/m/n/12 (-20) .
  []
 
 [2] [3]
-Overfull \hbox (0.8243pt too wide) in paragraph at lines 118--119
+Overfull \hbox (0.8243pt too wide) in paragraph at lines 120--121
 \T1/lmr/m/n/12 (-20) Os co-man-dos abaixo são exe-cu-ta-dos na raiz do re-po-si
 -tó-rio, após ins-ta-lar \T1/lmtt/m/n/12 requirements.txt\T1/lmr/m/n/12 (-20) ;
 
  []
 
 [4]
+Overfull \hbox (13.87082pt too wide) in paragraph at lines 146--147
+\T1/lmr/m/n/12 (-20) me-ta-da-dos JSON da pri-meira de-tec-ção es-tá-vel no in-
+ter-valo. A op-ção \T1/lmtt/m/n/12 --send-frame-to-openai
+ []
+
+[5]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 157.
+(Font)              <12> on input line 163.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 157.
+(Font)              <8> on input line 163.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 157.
- [5]
+(Font)              <6> on input line 163.
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
-85.
+91.
  (/usr/share/texmf/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [6{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}]
-Overfull \hbox (9.01126pt too wide) in paragraph at lines 206--207
+Overfull \hbox (9.01126pt too wide) in paragraph at lines 212--213
 []\T1/lmr/m/n/12 (-20) CAMMA. \T1/lmr/m/it/12 (-20) Cho-lec80 Da-ta-set\T1/lmr/
 m/n/12 (-20) . Dis-po-ní-vel em: []$\T1/lmtt/m/n/12 https : / / camma . unistra
  . fr / datasets/$[]\T1/lmr/m/n/12 (-20) .
  []
 
-
-Overfull \hbox (86.23975pt too wide) in paragraph at lines 209--210
+[7]
+Overfull \hbox (86.23975pt too wide) in paragraph at lines 215--216
 []\T1/lmr/m/n/12 (-20) PROJETO. \T1/lmr/m/it/12 (-20) Ar-qui-te-tura dos pi-pe-
 li-nes\T1/lmr/m/n/12 (-20) . Do-cu-mento lo-cal: \T1/lmtt/m/n/12 documentos/arq
 uitetura/arquitetura.md\T1/lmr/m/n/12 (-20) . 
  []
 
-[7]
-Overfull \hbox (62.42213pt too wide) in paragraph at lines 220--221
+[8]
+Overfull \hbox (62.42213pt too wide) in paragraph at lines 226--227
 \T1/lmr/m/n/12 (-20) Os grá-fi-cos a se-guir fo-ram ge-ra-dos pe-los ar-te-fa-t
 os do Ul-traly-tics em \T1/lmtt/m/n/12 runs/detect/cholec80-yolov8n-2\T1/lmr/m/
 n/12 (-20) .
  []
 
-<../../runs/detect/cholec80-yolov8n-2/results.png, id=206, 867.24pt x 433.62pt>
+<../../runs/detect/cholec80-yolov8n-2/results.png, id=215, 867.24pt x 433.62pt>
 
 File: ../../runs/detect/cholec80-yolov8n-2/results.png Graphic file (type png)
 <use ../../runs/detect/cholec80-yolov8n-2/results.png>
 Package pdftex.def Info: ../../runs/detect/cholec80-yolov8n-2/results.png  used
- on input line 224.
+ on input line 230.
 (pdftex.def)             Requested size: 455.24411pt x 227.62082pt.
-<../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png, id=208, 650.43pt x 433.6
+<../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png, id=217, 650.43pt x 433.6
 2pt>
 File: ../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png Graphic file (type p
 ng)
 <use ../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png>
 Package pdftex.def Info: ../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png  
-used on input line 231.
+used on input line 237.
 (pdftex.def)             Requested size: 418.82375pt x 279.2229pt.
-[8
+[9
 
  <../../runs/detect/cholec80-yolov8n-2/results.png>]
-<../../runs/detect/cholec80-yolov8n-2/confusion_matrix.png, id=214, 867.24pt x 
+<../../runs/detect/cholec80-yolov8n-2/confusion_matrix.png, id=223, 867.24pt x 
 650.43pt>
 File: ../../runs/detect/cholec80-yolov8n-2/confusion_matrix.png Graphic file (t
 ype png)
 <use ../../runs/detect/cholec80-yolov8n-2/confusion_matrix.png>
 Package pdftex.def Info: ../../runs/detect/cholec80-yolov8n-2/confusion_matrix.
-png  used on input line 238.
+png  used on input line 244.
 (pdftex.def)             Requested size: 373.3035pt x 279.97719pt.
-<video01-first-tool-frame-003375.jpg, id=215, 857.2025pt x 481.8pt>
+<video01-first-tool-frame-003375.jpg, id=224, 857.2025pt x 481.8pt>
 File: video01-first-tool-frame-003375.jpg Graphic file (type jpg)
 <use video01-first-tool-frame-003375.jpg>
 Package pdftex.def Info: video01-first-tool-frame-003375.jpg  used on input lin
-e 247.
+e 253.
 (pdftex.def)             Requested size: 257.16273pt x 144.5411pt.
- [9 <../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png> <../../runs/detect/c
-holec80-yolov8n-2/confusion_matrix.png>]
+ [10 <../../runs/detect/cholec80-yolov8n-2/BoxPR_curve.png> <../../runs/detect/
+cholec80-yolov8n-2/confusion_matrix.png>]
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 254.
+nput line 260.
  (/usr/share/texlive/texmf-dist/tex/latex/base/latin1.def
 File: latin1.def 2021/02/14 v1.3d Input encoding file
 )
@@ -658,13 +663,13 @@ File: se-utf8.def 2019/11/29 v1.12 stringenc: UTF-8
 (/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-iso-8859-1.def
 File: se-iso-8859-1.def 2019/11/29 v1.12 stringenc: ISO-8859-1
 )
-[10 <./video01-first-tool-frame-003375.jpg>]
+[11 <./video01-first-tool-frame-003375.jpg>]
 (/usr/share/texlive/texmf-dist/tex/latex/base/latin1.def
 File: latin1.def 2021/02/14 v1.3d Input encoding file
-) [11]
+) [12]
 (/usr/share/texlive/texmf-dist/tex/latex/base/latin1.def
 File: latin1.def 2021/02/14 v1.3d Input encoding file
-) [12] [13]
+) [13] [14]
 (./relatorio-tecnico-pipelines.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
@@ -675,8 +680,8 @@ nged.
 (rerunfilecheck)             Checksum: 982C30F16A9677063447AADD6EA65267;4219.
  ) 
 Here is how much of TeX's memory you used:
- 15254 strings out of 476162
- 241208 string characters out of 5794813
+ 15259 strings out of 476162
+ 241275 string characters out of 5794813
  2347975 words of memory out of 5000000
  36697 multiletter control sequences out of 15000+600000
  628138 words of font info for 153 fonts, out of 8000000 for 9000
@@ -688,10 +693,10 @@ r/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/pub
 lic/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/shar
 e/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/l
 m/lmtt12.pfb>
-Output written on relatorio-tecnico-pipelines.pdf (13 pages, 843456 bytes).
+Output written on relatorio-tecnico-pipelines.pdf (14 pages, 844768 bytes).
 PDF statistics:
- 434 PDF objects out of 1000 (max. 8388607)
- 390 compressed objects within 4 object streams
- 200 named destinations out of 1000 (max. 500000)
+ 444 PDF objects out of 1000 (max. 8388607)
+ 399 compressed objects within 4 object streams
+ 205 named destinations out of 1000 (max. 500000)
  40133 words of extra memory for PDF output out of 42996 (max. 10000000)
 

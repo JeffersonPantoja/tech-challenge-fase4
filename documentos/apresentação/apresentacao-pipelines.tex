@@ -52,8 +52,8 @@
 }
 
 \title{Pipelines de análise de vídeo e áudio}
-\subtitle{Detecção de instrumentos e análise de fala}
-\author{Tech Challenge — Fase 4}
+\subtitle{}
+\author{Jefferson A. P. Silva\\Tech Challenge — Fase 4}
 \date{Novembro de 2026}
 
 \begin{document}
@@ -68,17 +68,14 @@
   \begin{columns}[T,onlytextwidth]
     \column{0.48\textwidth}
       \begin{block}{Visão computacional — \texttt{video\_review}}
-        Rastreamento e detecção de instrumentos em vídeo cirúrgico com OpenCV e YOLOv8. Gera previsões e artefatos para revisão humana.
+        Rastreamento e detecção de instrumentos em vídeo cirúrgico com OpenCV e YOLOv8. Gera relatório da detecção para revisão humana.
       \end{block}
     \column{0.48\textwidth}
       \begin{block}{Áudio — \texttt{therapy\_audio}}
-        Extrai e transcreve áudio em português; classifica a polaridade textual com AWS Comprehend e permite análise complementar pela OpenAI.
+        Extrai e transcreve áudio em português; classifica o sentimento textual com AWS Comprehend e identifica termos críticos da classificação com OpenAI.
       \end{block}
   \end{columns}
   \vspace{0.5em}
-  \begin{alertblock}{Escopo}
-    Protótipos acadêmicos. Não realizam diagnóstico nem substituem revisão humana ou avaliação independente.
-  \end{alertblock}
 \end{frame}
 
 % Slide 3 — Cholec80
@@ -86,8 +83,8 @@
   \begin{itemize}
     \item 80 vídeos de colecistectomias laparoscópicas realizadas por 13 cirurgiões.
     \item Vídeos a 25 fps; fases cirúrgicas anotadas por quadro e presença binária de instrumentos a 1 fps.
-    \item Rótulos de presença não fornecem, por si só, caixas delimitadoras. As caixas usadas no projeto são rastreadas/revisadas e precisam de validação.
-    \item Licença informada pela CAMMA: CC BY-NC-SA 4.0; conferir as condições de acesso, uso e citação antes de reutilizar ou redistribuir.
+    \item Rótulos de presença não fornecem, por si só, caixas delimitadoras.
+    \item Licença informada pela CAMMA: CC BY-NC-SA 4.0.
   \end{itemize}
   \vfill
   {\scriptsize
@@ -125,13 +122,10 @@
     \textit{Paulo Knapp Demonstra uma Sessão de Terapia Cognitivo-Comportamental — TCC}, publicado pelo canal Centro de Mindfulness. A descrição informa que foi filmado no Congresso CCE de 2010.
   \end{block}
   \begin{itemize}
-    \item O projeto processa um arquivo local; o caminho de entrada é configurável.
     \item A publicação é identificada como demonstração. Não há base para descrevê-la como gravação de atendimento clínico real.
-    \item Antes de baixar, processar ou redistribuir, verificar licença, autorização e privacidade.
   \end{itemize}
   \vfill
-  {\scriptsize Requisito do projeto e vídeo: \url{https://www.youtube.com/watch?v=VS6YMAjdGZA}\\
-  Origem documentada em: \texttt{documentos/requisitos/pipeline-audio-sessao-terapia.md}}
+  {\scriptsize Vídeo: \url{https://www.youtube.com/watch?v=VS6YMAjdGZA}}
 \end{frame}
 
 % Slide 6 — fluxo de áudio
@@ -162,7 +156,7 @@
 \begin{frame}[plain]
   \centering
   \vfill
-  {\Huge Demonstração ao vivo}\par
+  {\Huge Demonstração}\par
   \vspace{1em}
   {\large Dois fluxos independentes; resultados para revisão humana.}\par
   \vfill
